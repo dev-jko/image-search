@@ -10,9 +10,7 @@ class ApiRetrofit @Inject constructor(
     private val service: ApiService
 ) {
 
-    private val baseUrl = "https://dapi.kakao.com/"
-
-    fun searchImage(query: String): Single<List<Document>> {
+    fun searchImage(query: Map<String, String>): Single<List<Document>> {
         return service.searchImage(query).map { it.documents }
     }
 
