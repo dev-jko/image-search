@@ -9,18 +9,18 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiRetrofitTest {
 
-    private lateinit var service: ApiService
+    private lateinit var retrofit: ApiRetrofit
     private val baseUrl = "https://dapi.kakao.com/"
 
     @Before
     fun setUp() {
-        val retrofit = Retrofit.Builder()
+        val service = Retrofit.Builder()
             .baseUrl(this.baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
-
-        this.service = retrofit.create(ApiService::class.java)
+            .create(ApiService::class.java)
+        this.retrofit = ApiRetrofit(service)
     }
 
     @After
@@ -29,13 +29,12 @@ class ApiRetrofitTest {
 
     @Test
     fun searchImage() {
-        val result = this.service.searchImage(mapOf<String, String>("query" to "안드로이드"))
+        val result = this.retrofit.searchImage(mapOf<String, String>("query" to "안드로이드"))
         result.test()
             .values()
             .forEach {
-                println(it.meta!!.totalCount)
-                println(it.documents!![0].displaySitename)
-                println(it.documents!![0].thumbnailUrl)
+                println(it[0].displaySitename)
+                println(it[0].thumbnailUrl)
             }
     }
 }

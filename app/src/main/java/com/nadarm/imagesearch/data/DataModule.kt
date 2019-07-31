@@ -1,6 +1,5 @@
 package com.nadarm.imagesearch.data
 
-import android.app.Application
 import com.nadarm.imagesearch.data.api.ApiService
 import dagger.Module
 import dagger.Provides
@@ -20,7 +19,7 @@ object DataProvideModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideApiService(application: Application): ApiService {
+    fun provideApiService(): ApiService {
         val baseUrl = "https://dapi.kakao.com/"
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
