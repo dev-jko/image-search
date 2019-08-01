@@ -18,7 +18,7 @@ interface SearchViewModel {
     @Singleton
     class ViewModelImpl @Inject constructor(
 
-    ) : ViewModel(), SearchViewModel.Inputs, SearchViewModel.Outputs {
+    ) : ViewModel(), Inputs, Outputs {
 
 
     }
