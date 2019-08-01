@@ -1,5 +1,7 @@
 package com.nadarm.imagesearch.data.api
 
+import com.nadarm.imagesearch.data.remote.api.ApiRetrofit
+import com.nadarm.imagesearch.data.remote.api.ApiService
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

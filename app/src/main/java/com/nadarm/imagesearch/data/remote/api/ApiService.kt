@@ -1,6 +1,6 @@
-package com.nadarm.imagesearch.data.api
+package com.nadarm.imagesearch.data.remote.api
 
-import com.nadarm.imagesearch.data.api.response.ImageSearchResponse
+import com.nadarm.imagesearch.data.model.response.ImageSearchResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -10,7 +10,7 @@ interface ApiService {
 
     @GET("v2/search/image")
     fun searchImage(
-        @QueryMap(encoded = true) query: Map<String, String>,
+        @QueryMap(encoded = true) queryMap: Map<String, String>,
         @Header("Authorization") apiKey: String
     ): Single<ImageSearchResponse>
 

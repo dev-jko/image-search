@@ -1,64 +1,64 @@
-package com.nadarm.imagesearch.data.api.response
+package com.nadarm.imagesearch.data.model.response
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
-class ImageSearchResponse {
+data class ImageSearchResponse(
     @SerializedName("meta")
     @Expose
-    var meta: Meta? = null
+    val meta: Meta,
 
     @SerializedName("documents")
     @Expose
-    var documents: List<Document>? = null
-}
+    val documents: List<Document>
+)
 
 
-class Meta {
+data class Meta(
     @SerializedName("total_count")
     @Expose
-    var totalCount: Int? = null
+    var totalCount: Int,
 
     @SerializedName("pageable_count")
     @Expose
-    var pageableCount: Int? = null
+    var pageableCount: Int,
 
     @SerializedName("is_end")
     @Expose
-    var isEnd: Boolean? = null
-}
+    var isEnd: Boolean
+)
 
-class Document {
+data class Document(
     @SerializedName("collection")
     @Expose
-    var collection: String? = null
+    var collection: String,
 
     @SerializedName("thumbnail_url")
     @Expose
-    var thumbnailUrl: String? = null
+    var thumbnailUrl: String,
 
     @SerializedName("image_url")
     @Expose
-    var imageUrl: String? = null
+    var imageUrl: String,
 
     @SerializedName("width")
     @Expose
-    var width: Int? = null
+    var width: Int,
 
     @SerializedName("height")
     @Expose
-    var height: Int? = null
+    var height: Int,
 
     @SerializedName("display_sitename")
     @Expose
-    var displaySitename: String? = null
+    var displaySiteName: String,
 
     @SerializedName("doc_url")
     @Expose
-    var docUrl: String? = null
+    var docUrl: String,
 
     @SerializedName("datetime")
     @Expose
-    var datetime: String? = null
-}
+    var datetime: String
+)
