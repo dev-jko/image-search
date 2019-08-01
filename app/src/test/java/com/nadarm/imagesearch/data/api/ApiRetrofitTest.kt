@@ -31,12 +31,6 @@ class ApiRetrofitTest {
 
     @Test
     fun searchImage() {
-        val result = this.retrofit.searchImage(mapOf<String, String>("query" to "안드로이드"))
-        result.test()
-            .values()
-            .forEach {
-                println(it[0].displaySitename)
-                println(it[0].thumbnailUrl)
-            }
+
     }
 }
