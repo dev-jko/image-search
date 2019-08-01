@@ -1,4 +1,4 @@
-package com.nadarm.imagesearch.data
+package com.nadarm.imagesearch.data.repository
 
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import com.nadarm.imagesearch.domain.repository.ImageDocumentRepository

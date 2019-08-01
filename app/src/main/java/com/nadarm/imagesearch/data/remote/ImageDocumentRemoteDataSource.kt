@@ -1,6 +1,6 @@
 package com.nadarm.imagesearch.data.remote
 
-import com.nadarm.imagesearch.data.ImageDocumentDataSource
+import com.nadarm.imagesearch.data.repository.ImageDocumentDataSource
 import com.nadarm.imagesearch.data.model.mapper.ImageDocumentMapper
 import com.nadarm.imagesearch.data.model.response.ImageSearchResponse
 import com.nadarm.imagesearch.data.remote.api.ApiRetrofit
