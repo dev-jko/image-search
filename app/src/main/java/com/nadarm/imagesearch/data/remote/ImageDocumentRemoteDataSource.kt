@@ -15,21 +15,15 @@ class ImageDocumentRemoteDataSource @Inject constructor(
     private val mapper: ImageDocumentMapper
 ) : ImageDocumentDataSource.Remote {
 
-    override fun getImageDocuments(query: String, page: Int): Single<List<ImageDocument>> {
+    override fun getImageDocuments(
+        query: String,
+        page: Int
+    ): Single<List<ImageDocument>> {
         if (page < 1 || page > 50) {
             return Single.error(IndexOutOfBoundsException())
         }
 
         return retrofit.searchImage(query, page)
             .map { response: ImageSearchResponse -> mapper.mapFromData(response, page) }
-    }
-
-    override fun getImageDocument(query: String, page: Int, index: Int): Single<ImageDocument> {
-        if (index < 1 || index > 80) {
-            return Single.error(IndexOutOfBoundsException())
-        }
-
-        return this.getImageDocuments(query, page)
-            .map { documents: List<ImageDocument> -> documents.elementAt(index - 1) }
     }
 }

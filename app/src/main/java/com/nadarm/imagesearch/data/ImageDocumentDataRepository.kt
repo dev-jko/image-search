@@ -1,5 +1,6 @@
 package com.nadarm.imagesearch.data
 
+import com.nadarm.imagesearch.AppSchedulers
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import com.nadarm.imagesearch.domain.repository.ImageDocumentRepository
 import io.reactivex.Single
@@ -9,15 +10,20 @@ import javax.inject.Singleton
 
 @Singleton
 class ImageDocumentDataRepository @Inject constructor(
-    private val local: ImageDocumentDataSource.Local,
-    private val remote: ImageDocumentDataSource.Remote
+    private val cache: ImageDocumentDataSource.Cache,
+    private val remote: ImageDocumentDataSource.Remote,
+    private val schedulers: AppSchedulers
 ) : ImageDocumentRepository {
 
     override fun getImageDocuments(query: String, page: Int): Single<List<ImageDocument>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getImageDocument(query: String, page: Int, index: Int): Single<ImageDocument> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return if (this.cache.isExistAndFresh(query, page)) {
+            this.cache.getImageDocuments(query, page)
+                .subscribeOn(schedulers.io())
+        } else {
+            this.remote.getImageDocuments(query, page)
+                .retry(2)
+                .doOnSuccess { this.cache.pushImageDocuments(query, page, it) }
+                .subscribeOn(schedulers.io())
+        }
     }
 }

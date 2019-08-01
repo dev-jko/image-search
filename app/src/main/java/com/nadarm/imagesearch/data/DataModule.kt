@@ -1,5 +1,6 @@
 package com.nadarm.imagesearch.data
 
+import com.nadarm.imagesearch.data.cache.ImageDocumentCacheDataSource
 import com.nadarm.imagesearch.data.model.mapper.ImageDocumentMapper
 import com.nadarm.imagesearch.data.remote.ImageDocumentRemoteDataSource
 import com.nadarm.imagesearch.data.remote.api.ApiService
@@ -18,6 +19,10 @@ interface DataBindModule {
     @Singleton
     @Binds
     fun bindImageDocumentRemoteDataSource(dataSource: ImageDocumentRemoteDataSource): ImageDocumentDataSource.Remote
+
+    @Singleton
+    @Binds
+    fun bindImageDocumentCacheDataSource(dataSource: ImageDocumentCacheDataSource): ImageDocumentDataSource.Cache
 
     @Singleton
     @Binds
