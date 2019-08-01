@@ -1,6 +1,6 @@
 package com.nadarm.imagesearch.data.cache
 
-import com.nadarm.imagesearch.data.ImageDocumentDataSource
+import com.nadarm.imagesearch.data.repository.ImageDocumentDataSource
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import io.reactivex.Single
 import java.util.*
@@ -10,13 +10,13 @@ import javax.inject.Singleton
 @Singleton
 class ImageDocumentCacheDataSource @Inject constructor() : ImageDocumentDataSource.Cache {
 
-    private val cached: MutableList<Data> = LinkedList()
+    private val cached: LinkedList<Data> = LinkedList()
 
     override fun pushImageDocuments(query: String, page: Int, documents: List<ImageDocument>) {
         if (this.cached.size >= 5) {
-            this.cached.removeAt(0)
+            this.cached.removeFirst()
         }
-        cached.add(Data(query, page, documents))
+        cached.addLast(Data(query, page, documents))
     }
 
     override fun getImageDocuments(query: String, page: Int): Single<List<ImageDocument>> {

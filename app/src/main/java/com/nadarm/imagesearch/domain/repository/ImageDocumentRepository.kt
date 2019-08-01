@@ -9,8 +9,4 @@ interface ImageDocumentRepository {
 
     fun getImageDocuments(query: String, page: Int = 1): Single<List<ImageDocument>>
 
-    fun addRecentlyImageDocument(imageDocument: ImageDocument): Completable
-
-    fun getRecentlyImageDocuments(): Flowable<List<ImageDocument>>
-
 }

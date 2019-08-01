@@ -1,10 +1,16 @@
 package com.nadarm.imagesearch.data
 
 import com.nadarm.imagesearch.data.cache.ImageDocumentCacheDataSource
+import com.nadarm.imagesearch.data.cache.RecentlyViewedCacheDataSource
 import com.nadarm.imagesearch.data.model.mapper.ImageDocumentMapper
 import com.nadarm.imagesearch.data.remote.ImageDocumentRemoteDataSource
 import com.nadarm.imagesearch.data.remote.api.ApiService
+import com.nadarm.imagesearch.data.repository.ImageDocumentDataRepository
+import com.nadarm.imagesearch.data.repository.ImageDocumentDataSource
+import com.nadarm.imagesearch.data.repository.RecentlyViewedDataRepository
+import com.nadarm.imagesearch.data.repository.RecentlyViewedDataSource
 import com.nadarm.imagesearch.domain.repository.ImageDocumentRepository
+import com.nadarm.imagesearch.domain.repository.RecentlyViewedRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -27,6 +33,14 @@ interface DataBindModule {
     @Singleton
     @Binds
     fun bindImageRepository(repository: ImageDocumentDataRepository): ImageDocumentRepository
+
+    @Singleton
+    @Binds
+    fun bindRecentlyViewedCacheDataSource(dataSource: RecentlyViewedCacheDataSource): RecentlyViewedDataSource.Cache
+
+    @Singleton
+    @Binds
+    fun bindRecentlyViewedRepository(repository: RecentlyViewedDataRepository): RecentlyViewedRepository
 }
 
 @Module
