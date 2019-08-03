@@ -12,6 +12,7 @@ import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentListBinding
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
 import com.nadarm.imagesearch.presenter.viewModel.ListViewModel
+import com.nadarm.imagesearch.presenter.viewModel.SearchViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -25,6 +26,8 @@ class ListFragment : Fragment() {
 
     @Inject
     lateinit var listVm: ListViewModel.ViewModelImpl
+    @Inject
+    lateinit var searchVm: SearchViewModel.ViewModelImpl
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,10 +46,15 @@ class ListFragment : Fragment() {
 
         this.binding.adapter = ImageAdapter(this.listVm)
         this.binding.listVm = this.listVm
+        this.binding.searchVm = this.searchVm
 
         this.listVm.outputs.startDetailFragment()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { this.startDetailFragment() }
+            .addTo(compositeDisposable)
+
+        this.searchVm.outputs.query()
+            .subscribe(this.listVm.inputs::query)
             .addTo(compositeDisposable)
     }
 

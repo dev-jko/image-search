@@ -3,6 +3,7 @@
     <data>
         <variable name="adapter" type="com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter"/>
         <variable name="listVm" type="com.nadarm.imagesearch.presenter.viewModel.ListViewModel.ViewModelImpl"/>
+        <variable name="searchVm" type="com.nadarm.imagesearch.presenter.viewModel.SearchViewModel.ViewModelImpl"/>
     </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
@@ -34,12 +35,14 @@
                         app:title="고재두"
                 />
 
-                <SearchView
+                <com.nadarm.imagesearch.util.MySearchView
+                        android:id="@+id/search_view"
                         android:queryHint="search"
                         android:background="@color/colorBrown"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         android:iconifiedByDefault="false"
+                        querySubmitted="@{searchVm}"
                 />
 
 
