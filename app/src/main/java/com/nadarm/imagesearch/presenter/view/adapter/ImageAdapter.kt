@@ -2,7 +2,6 @@ package com.nadarm.imagesearch.presenter.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.nadarm.imagesearch.R
@@ -15,18 +14,12 @@ class ImageAdapter(
 
     interface Delegate : ViewHolder.Delegate
 
-    private val documents: ArrayList<ImageDocument> = ArrayList()
+    private var documents: List<ImageDocument> = emptyList()
 
 
     fun refresh(newDocuments: List<ImageDocument>) {
-        this.documents.clear()
-        this.documents.addAll(newDocuments)
+        this.documents = newDocuments
         notifyDataSetChanged()
-    }
-
-    fun addDocuments(newDocuments: List<ImageDocument>) {
-        this.documents.addAll(newDocuments)
-        notifyItemRangeInserted(this.documents.size, newDocuments.size)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,15 +39,13 @@ class ImageAdapter(
         private val binding: ImageItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        interface Delegate {
-            fun imageRequested(imageView: ImageView, document: ImageDocument)
-            fun documentClicked(document: ImageDocument)
-        }
-
         fun bind(document: ImageDocument, delegate: Delegate) {
-            delegate.imageRequested(binding.imageView, document)
-            binding.root.setOnClickListener { delegate.documentClicked(document) }
+            binding.imageDocument = document
+            binding.delegate = delegate
         }
 
+        interface Delegate {
+            fun imageClicked(imageDocument: ImageDocument)
+        }
     }
 }

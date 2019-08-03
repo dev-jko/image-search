@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
+        <variable name="imageDocument" type="com.nadarm.imagesearch.domain.model.ImageDocument"/>
+        <variable name="delegate"
+                  type="com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter.ViewHolder.Delegate"/>
     </data>
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:layout_margin="3dp"
+            android:elevation="3dp"
+            android:onClick="@{() -> delegate.imageClicked(imageDocument)}"
+    >
 
         <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/imageView"/>
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                bindUrl="@{imageDocument.thumbnailUrl}"
+        />
 
     </androidx.cardview.widget.CardView>
 </layout>
