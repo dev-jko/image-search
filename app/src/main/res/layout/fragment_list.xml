@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="adapter" type="com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter"/>
+        <variable name="listVm" type="com.nadarm.imagesearch.presenter.viewModel.ListViewModel.ViewModelImpl"/>
+        <variable name="searchVm" type="com.nadarm.imagesearch.presenter.viewModel.SearchViewModel.ViewModelImpl"/>
+    </data>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+    >
+
+        <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appbar"
+                android:layout_height="140dp"
+                android:layout_width="match_parent"
+                android:background="@color/colorBrown"
+                android:theme="@style/AppTheme.Toolbar"
+        >
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:toolbarId="@+id/toolbar"
+                    app:layout_scrollFlags="scroll|enterAlways|snap"
+                    app:contentScrim="@color/colorBrown"
+            >
+
+                <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_height="?attr/actionBarSize"
+                        app:layout_collapseMode="pin"
+                        android:layout_width="match_parent"
+                        app:title="고재두"
+                />
+
+                <com.nadarm.imagesearch.util.MySearchView
+                        android:id="@+id/search_view"
+                        android:queryHint="search"
+                        android:background="@color/colorBrown"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:iconifiedByDefault="false"
+                        querySubmitted="@{searchVm}"
+                />
+
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/image_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorWhite"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"
+                android:adapter="@{adapter}"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@android:drawable/arrow_up_float"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:tint="@color/colorBrown"
+                android:backgroundTint="@color/colorYellow"
+                app:elevation="6dp"
+        />
+
+        <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:id="@+id/list_progress_bar"
+                android:visibility="gone"
+        />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

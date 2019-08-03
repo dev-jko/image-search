@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="detailVm" type="com.nadarm.imagesearch.presenter.viewModel.DetailViewModel.ViewModelImpl"/>
+        <variable name="imageDocument" type="com.nadarm.imagesearch.domain.model.ImageDocument"/>
+    </data>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".presenter.view.fragment.DetailFragment">
+
+
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/DetailImageView"
+                android:background="@color/colorWhite"
+                android:layout_gravity="center"
+                bindUrl="@{imageDocument.imageUrl}"
+                bindProgressBar="@{progressBar}"
+        />
+        <ProgressBar
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:id="@+id/progressBar"/>
+
+
+    </FrameLayout>
+</layout>
