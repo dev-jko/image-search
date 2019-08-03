@@ -59,7 +59,6 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="3"
                 android:adapter="@{adapter}"
-                bindDocuments="@{listVm.outputs.imageDocuments()}"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
 
@@ -81,7 +80,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="@{listVm.outputs.displayProgress()}"
+                android:id="@+id/list_progress_bar"
+                android:visibility="gone"
         />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -10,12 +10,16 @@ import androidx.navigation.fragment.findNavController
 import com.nadarm.imagesearch.AndroidApplication
 import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentListBinding
+import com.nadarm.imagesearch.domain.model.ImageDocument
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
+import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
 import com.nadarm.imagesearch.presenter.viewModel.ListViewModel
+import com.nadarm.imagesearch.presenter.viewModel.RecentlyViewedImageViewModel
 import com.nadarm.imagesearch.presenter.viewModel.SearchViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -28,6 +32,11 @@ class ListFragment : Fragment() {
     lateinit var listVm: ListViewModel.ViewModelImpl
     @Inject
     lateinit var searchVm: SearchViewModel.ViewModelImpl
+    @Inject
+    lateinit var recentlyVm: RecentlyViewedImageViewModel.ViewModelImpl
+    @Inject
+    lateinit var detailVm: DetailViewModel.ViewModelImpl
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +59,18 @@ class ListFragment : Fragment() {
 
         this.listVm.outputs.startDetailFragment()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { this.startDetailFragment() }
+            .subscribe(this::startDetailFragment)
+            .addTo(compositeDisposable)
+
+        this.listVm.outputs.imageDocuments()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::refreshDocuments)
+            .addTo(compositeDisposable)
+
+        this.listVm.outputs.displayProgress()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::displayProgress)
             .addTo(compositeDisposable)
 
         this.searchVm.outputs.query()
@@ -58,8 +78,17 @@ class ListFragment : Fragment() {
             .addTo(compositeDisposable)
     }
 
-    private fun startDetailFragment() {
+    private fun refreshDocuments(documents: List<ImageDocument>) {
+        this.binding.adapter?.refresh(documents)
+    }
+
+    private fun displayProgress(visibility: Int) {
+        this.binding.listProgressBar.visibility = visibility
+    }
+
+    private fun startDetailFragment(imageDocument: ImageDocument) {
         if (this.findNavController().currentDestination!!.id == R.id.listFragment) {
+            this.detailVm.inputs.selectedImage(imageDocument)
             this.findNavController().navigate(R.id.action_listFragment_to_detailFragment)
         }
     }

@@ -9,15 +9,22 @@ import androidx.fragment.app.Fragment
 import com.nadarm.imagesearch.AndroidApplication
 import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentDetailBinding
-import com.nadarm.imagesearch.presenter.viewModel.ListViewModel
+import com.nadarm.imagesearch.domain.model.ImageDocument
+import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
+import com.nadarm.imagesearch.util.loadImage
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
 
 class DetailFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailBinding
+    private val compositeDisposable = CompositeDisposable()
 
-    @Inject lateinit var listVm: ListViewModel.ViewModelImpl
+    @Inject
+    lateinit var detailVm: DetailViewModel.ViewModelImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +40,16 @@ class DetailFragment : Fragment() {
 
         (activity!!.application as AndroidApplication).getAppComponent().inject(this)
 
-        this.binding.listVm = this.listVm
+        this.binding.detailVm = this.detailVm
+
+        this.detailVm.outputs.loadImageDocument()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::setImageDocument)
+            .addTo(compositeDisposable)
+    }
+
+    private fun setImageDocument(imageDocument: ImageDocument) {
+        this.binding.imageDocument = imageDocument
     }
 
     companion object {

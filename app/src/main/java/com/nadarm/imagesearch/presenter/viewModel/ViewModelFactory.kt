@@ -37,5 +37,14 @@ abstract class ViewModelModule {
     @ViewModelKey(ListViewModel.ViewModelImpl::class)
     internal abstract fun listViewModel(viewModel: ListViewModel.ViewModelImpl): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchViewModel.ViewModelImpl::class)
+    internal abstract fun searchViewModel(viewModel: SearchViewModel.ViewModelImpl): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DetailViewModel.ViewModelImpl::class)
+    internal abstract fun detailViewModel(viewModel: DetailViewModel.ViewModelImpl): ViewModel
 
 }
