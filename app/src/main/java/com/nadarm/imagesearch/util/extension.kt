@@ -2,9 +2,7 @@ package com.nadarm.imagesearch.util
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.ImageView
 import android.widget.SearchView
-import com.bumptech.glide.Glide
 
 class MySearchView : SearchView {
     constructor(context: Context) : super(context)
@@ -19,5 +17,25 @@ class MySearchView : SearchView {
 
     interface Delegate {
         fun querySubmitted(query: String)
+        fun queryChanged(text: String)
     }
+}
+
+fun SearchView.setOnQueryListener(delegate: MySearchView.Delegate) {
+    this.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?): Boolean {
+            if (query != null) {
+                delegate.querySubmitted(query)
+                clearFocus()
+            }
+            return true
+        }
+
+        override fun onQueryTextChange(newText: String?): Boolean {
+            if (newText != null && newText.length >= 2) {
+                delegate.queryChanged(newText)
+            }
+            return true
+        }
+    })
 }
