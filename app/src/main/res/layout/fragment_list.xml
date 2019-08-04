@@ -17,6 +17,7 @@
                 android:layout_width="match_parent"
                 android:background="@color/colorBrown"
                 android:theme="@style/AppTheme.Toolbar"
+                android:elevation="10dp"
         >
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -60,20 +61,6 @@
                 app:spanCount="3"
                 android:adapter="@{adapter}"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        />
-
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:src="@android:drawable/arrow_up_float"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="16dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:tint="@color/colorBrown"
-                android:backgroundTint="@color/colorYellow"
-                app:elevation="6dp"
         />
 
         <ProgressBar

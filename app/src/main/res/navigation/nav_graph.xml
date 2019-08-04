@@ -12,6 +12,9 @@
     </fragment>
 
     <fragment android:id="@+id/detailFragment" android:name="com.nadarm.imagesearch.presenter.view.fragment.DetailFragment"
-              android:label="fragment_detail" tools:layout="@layout/fragment_detail"/>
+              android:label="fragment_detail" tools:layout="@layout/fragment_detail">
+        <action android:id="@+id/action_detailFragment_self" app:destination="@id/detailFragment"/>
+        <action android:id="@+id/action_detailFragment_self2" app:destination="@id/detailFragment"/>
+    </fragment>
 
 </navigation>

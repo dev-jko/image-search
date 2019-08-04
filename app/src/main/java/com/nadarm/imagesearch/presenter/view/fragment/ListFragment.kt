@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.nadarm.imagesearch.AndroidApplication
 import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentListBinding
@@ -18,6 +19,7 @@ import com.nadarm.imagesearch.presenter.viewModel.RecentlyViewedImageViewModel
 import com.nadarm.imagesearch.presenter.viewModel.SearchViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -27,7 +29,6 @@ class ListFragment : Fragment() {
 
     private lateinit var binding: FragmentListBinding
     private val compositeDisposable = CompositeDisposable()
-
     @Inject
     lateinit var listVm: ListViewModel.ViewModelImpl
     @Inject
@@ -63,6 +64,12 @@ class ListFragment : Fragment() {
             .addTo(compositeDisposable)
 
         this.listVm.outputs.imageDocuments()
+            .withLatestFrom(
+                this.listVm.outputs.restorePosition(),
+                BiFunction<List<ImageDocument>, Int, Pair<List<ImageDocument>, Int>> { documents, position ->
+                    documents to position
+                }
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::refreshDocuments)
@@ -76,10 +83,18 @@ class ListFragment : Fragment() {
         this.searchVm.outputs.query()
             .subscribe(this.listVm.inputs::query)
             .addTo(compositeDisposable)
+
+        this.binding.imageRecyclerView
+            .setOnScrollChangeListener { _, _, _, _, _ ->
+                val layoutManager = this.binding.imageRecyclerView.layoutManager as GridLayoutManager
+                val position = layoutManager.findFirstVisibleItemPosition()
+                this.listVm.inputs.savePosition(position)
+            }
     }
 
-    private fun refreshDocuments(documents: List<ImageDocument>) {
-        this.binding.adapter?.refresh(documents)
+    private fun refreshDocuments(documentsAndPosition: Pair<List<ImageDocument>, Int>) {
+        this.binding.adapter?.refresh(documentsAndPosition.first)
+        this.binding.imageRecyclerView.scrollToPosition(documentsAndPosition.second)
     }
 
     private fun displayProgress(visibility: Int) {
@@ -91,6 +106,11 @@ class ListFragment : Fragment() {
             this.detailVm.inputs.selectedImage(imageDocument)
             this.findNavController().navigate(R.id.action_listFragment_to_detailFragment)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        this.compositeDisposable.clear()
     }
 
     companion object {
