@@ -1,6 +1,7 @@
-package com.nadarm.imagesearch
+package com.nadarm.imagesearch.di
 
 import android.app.Application
+
 
 class AndroidApplication : Application() {
 

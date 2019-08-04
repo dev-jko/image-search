@@ -1,9 +1,9 @@
 package com.nadarm.imagesearch.data.remote
 
-import com.nadarm.imagesearch.data.repository.ImageDocumentDataSource
 import com.nadarm.imagesearch.data.model.mapper.ImageDocumentMapper
 import com.nadarm.imagesearch.data.model.response.ImageSearchResponse
 import com.nadarm.imagesearch.data.remote.api.ApiRetrofit
+import com.nadarm.imagesearch.data.repository.ImageDocumentDataSource
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import io.reactivex.Single
 import javax.inject.Inject
@@ -24,6 +24,6 @@ class ImageDocumentRemoteDataSource @Inject constructor(
         }
 
         return retrofit.searchImage(query, page)
-            .map { response: ImageSearchResponse -> mapper.mapFromData(response, page) }
+            .map { response: ImageSearchResponse -> mapper.mapFromData(query, response, page) }
     }
 }

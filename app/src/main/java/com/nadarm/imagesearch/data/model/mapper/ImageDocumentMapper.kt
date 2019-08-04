@@ -5,10 +5,11 @@ import com.nadarm.imagesearch.domain.model.ImageDocument
 
 object ImageDocumentMapper {
 
-    fun mapFromData(imageSearchResponse: ImageSearchResponse, page: Int): List<ImageDocument> {
-        var index = 1
+    fun mapFromData(query: String, imageSearchResponse: ImageSearchResponse, page: Int): List<ImageDocument> {
+        var index = 0
         return imageSearchResponse.documents.map {
             ImageDocument(
+                query,
                 it.thumbnailUrl,
                 it.imageUrl,
                 it.docUrl,

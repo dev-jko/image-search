@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.nadarm.imagesearch.R
-import com.nadarm.imagesearch.databinding.ImageItemBinding
+import com.nadarm.imagesearch.databinding.ImageListItemBinding
 import com.nadarm.imagesearch.domain.model.ImageDocument
 
 class ImageAdapter(
@@ -24,7 +24,7 @@ class ImageAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding: ImageItemBinding = DataBindingUtil.inflate(inflater, R.layout.image_item, parent, false)
+        val binding: ImageListItemBinding = DataBindingUtil.inflate(inflater, R.layout.image_list_item, parent, false)
         return ViewHolder(binding)
     }
 
@@ -36,7 +36,7 @@ class ImageAdapter(
 
 
     class ViewHolder(
-        private val binding: ImageItemBinding
+        private val binding: ImageListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(document: ImageDocument, delegate: Delegate) {
