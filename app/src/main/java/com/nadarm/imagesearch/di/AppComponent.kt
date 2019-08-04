@@ -1,7 +1,8 @@
-package com.nadarm.imagesearch
+package com.nadarm.imagesearch.di
 
 import com.nadarm.imagesearch.data.DataBindModule
 import com.nadarm.imagesearch.presenter.view.fragment.DetailFragment
+import com.nadarm.imagesearch.presenter.view.fragment.DetailPagerItem
 import com.nadarm.imagesearch.presenter.view.fragment.ListFragment
 import com.nadarm.imagesearch.presenter.viewModel.ViewModelModule
 import dagger.Component

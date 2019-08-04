@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.nadarm.imagesearch.AndroidApplication
+import com.nadarm.imagesearch.di.AndroidApplication
 import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentListBinding
 import com.nadarm.imagesearch.domain.model.ImageDocument

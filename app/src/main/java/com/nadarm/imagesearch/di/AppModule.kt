@@ -1,4 +1,4 @@
-package com.nadarm.imagesearch
+package com.nadarm.imagesearch.di
 
 import dagger.Module
 

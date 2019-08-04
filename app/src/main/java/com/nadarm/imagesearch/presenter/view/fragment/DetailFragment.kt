@@ -6,13 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.nadarm.imagesearch.AndroidApplication
 import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentDetailBinding
-import com.nadarm.imagesearch.domain.model.ImageDocument
+import com.nadarm.imagesearch.di.AndroidApplication
+import com.nadarm.imagesearch.presenter.view.adapter.DetailPagerAdapter
 import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
-import com.nadarm.imagesearch.util.loadImage
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
@@ -20,9 +18,8 @@ import javax.inject.Inject
 
 class DetailFragment : Fragment() {
 
-    private lateinit var binding: FragmentDetailBinding
     private val compositeDisposable = CompositeDisposable()
-
+    private lateinit var binding: FragmentDetailBinding
     @Inject
     lateinit var detailVm: DetailViewModel.ViewModelImpl
 
@@ -40,16 +37,26 @@ class DetailFragment : Fragment() {
 
         (activity!!.application as AndroidApplication).getAppComponent().inject(this)
 
+        val pagerAdapter: DetailPagerAdapter = DetailPagerAdapter(childFragmentManager)
+        this.binding.detailViewPager.adapter = pagerAdapter
+
         this.binding.detailVm = this.detailVm
 
-        this.detailVm.outputs.loadImageDocument()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::setImageDocument)
+        this.detailVm.outputs.imageDocuments()
+            .subscribe {
+                pagerAdapter.refresh(it)
+                pagerAdapter.notifyDataSetChanged()
+            }
+            .addTo(compositeDisposable)
+
+        this.detailVm.outputs.currentPageAndIndex()
+            .subscribe { this.binding.detailViewPager.currentItem = it.second }
             .addTo(compositeDisposable)
     }
 
-    private fun setImageDocument(imageDocument: ImageDocument) {
-        this.binding.imageDocument = imageDocument
+    override fun onDestroy() {
+        super.onDestroy()
+        this.compositeDisposable.clear()
     }
 
     companion object {
