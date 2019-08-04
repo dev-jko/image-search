@@ -2,18 +2,12 @@ package com.nadarm.imagesearch.util
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 
 class MySearchView : SearchView {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(
-        context,
-        attrs,
-        defStyleAttr,
-        defStyleRes
-    )
 
     interface Delegate {
         fun querySubmitted(query: String)
@@ -32,10 +26,11 @@ fun SearchView.setOnQueryListener(delegate: MySearchView.Delegate) {
         }
 
         override fun onQueryTextChange(newText: String?): Boolean {
-            if (newText != null && newText.length >= 2) {
-                delegate.queryChanged(newText)
+            val query = this@setOnQueryListener.query
+            if (query.length >= 2) {
+                delegate.queryChanged(query.toString())
             }
-            return true
+            return false
         }
     })
 }
