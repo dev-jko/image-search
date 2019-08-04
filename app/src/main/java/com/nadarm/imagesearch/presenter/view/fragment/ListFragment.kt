@@ -1,16 +1,18 @@
 package com.nadarm.imagesearch.presenter.view.fragment
 
+import android.database.Cursor
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.nadarm.imagesearch.di.AndroidApplication
 import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentListBinding
+import com.nadarm.imagesearch.di.AndroidApplication
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
 import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
@@ -58,6 +60,18 @@ class ListFragment : Fragment() {
         this.binding.listVm = this.listVm
         this.binding.searchVm = this.searchVm
 
+
+        this.searchVm.outputs.querySuggestions()
+            .subscribe {
+//                this.binding.searchView.suggestionsAdapter.cursor = Cursor(it)
+            }
+            .addTo(compositeDisposable)
+
+
+
+
+
+
         this.listVm.outputs.startDetailFragment()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::startDetailFragment)
@@ -92,7 +106,21 @@ class ListFragment : Fragment() {
             }
     }
 
+    private fun selectSpanCount(size: Int) {
+        when {
+            size <= 40 -> this.setGridLayoutSpanCount(2)
+            else -> this.setGridLayoutSpanCount(3)
+        }
+    }
+
+    private fun setGridLayoutSpanCount(count: Int) {
+        if (count in 1..4) {
+            (this.binding.imageRecyclerView.layoutManager as GridLayoutManager).spanCount = count
+        }
+    }
+
     private fun refreshDocuments(documentsAndPosition: Pair<List<ImageDocument>, Int>) {
+        this.selectSpanCount(documentsAndPosition.first.size)
         this.binding.adapter?.refresh(documentsAndPosition.first)
         this.binding.imageRecyclerView.scrollToPosition(documentsAndPosition.second)
     }
@@ -112,6 +140,7 @@ class ListFragment : Fragment() {
         super.onDestroy()
         this.compositeDisposable.clear()
     }
+
 
     companion object {
         @JvmStatic

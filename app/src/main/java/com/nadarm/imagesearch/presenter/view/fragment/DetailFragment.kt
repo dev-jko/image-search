@@ -39,7 +39,6 @@ class DetailFragment : Fragment() {
 
         val pagerAdapter: DetailPagerAdapter = DetailPagerAdapter(childFragmentManager)
         this.binding.detailViewPager.adapter = pagerAdapter
-
         this.binding.detailVm = this.detailVm
 
         this.detailVm.outputs.imageDocuments()

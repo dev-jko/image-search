@@ -16,6 +16,7 @@ interface SearchViewModel {
 
     interface Outputs {
         fun query(): Observable<String>
+        fun querySuggestions(): Observable<List<String>>
     }
 
 
@@ -25,15 +26,29 @@ interface SearchViewModel {
     ) : ViewModel(), Inputs, Outputs {
 
         private val querySubmitted: PublishSubject<String> = PublishSubject.create()
+        private val queryChanged: PublishSubject<String> = PublishSubject.create()
+
         private val query: Observable<String> = this.querySubmitted.throttleFirst(1000, TimeUnit.MILLISECONDS)
+        private val querySuggestions: Observable<List<String>>
 
         val inputs: Inputs = this
         val outputs: Outputs = this
 
+        init {
+
+            this.querySuggestions = Observable.just(listOf("추천 단어", "추천2"))
+
+        }
+
         override fun query(): Observable<String> = this.query
+        override fun querySuggestions(): Observable<List<String>> = this.querySuggestions
 
         override fun querySubmitted(query: String) {
             this.querySubmitted.onNext(query)
+        }
+
+        override fun queryChanged(text: String) {
+            this.queryChanged.onNext(text)
         }
 
     }
