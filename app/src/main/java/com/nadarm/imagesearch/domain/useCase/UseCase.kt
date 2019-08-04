@@ -4,6 +4,10 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 
+interface SingleUseCase1<Param1, Type> {
+    fun execute(param1: Param1): Single<Type>
+}
+
 interface SingleUseCase2<Param1, Param2, Type> {
     fun execute(param1: Param1, param2: Param2): Single<Type>
 }

@@ -1,16 +1,18 @@
 package com.nadarm.imagesearch.data
 
+import android.app.Application
 import com.nadarm.imagesearch.data.cache.ImageDocumentCacheDataSource
 import com.nadarm.imagesearch.data.cache.RecentlyViewedCacheDataSource
+import com.nadarm.imagesearch.data.local.SearchQueryDao
+import com.nadarm.imagesearch.data.local.SearchQueryDatabase
+import com.nadarm.imagesearch.data.local.SearchQueryLocalDataSource
 import com.nadarm.imagesearch.data.model.mapper.ImageDocumentMapper
 import com.nadarm.imagesearch.data.remote.ImageDocumentRemoteDataSource
 import com.nadarm.imagesearch.data.remote.api.ApiService
-import com.nadarm.imagesearch.data.repository.ImageDocumentDataRepository
-import com.nadarm.imagesearch.data.repository.ImageDocumentDataSource
-import com.nadarm.imagesearch.data.repository.RecentlyViewedDataRepository
-import com.nadarm.imagesearch.data.repository.RecentlyViewedDataSource
+import com.nadarm.imagesearch.data.repository.*
 import com.nadarm.imagesearch.domain.repository.ImageDocumentRepository
 import com.nadarm.imagesearch.domain.repository.RecentlyViewedRepository
+import com.nadarm.imagesearch.domain.repository.SearchQueryRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -41,6 +43,14 @@ interface DataBindModule {
     @Singleton
     @Binds
     fun bindRecentlyViewedRepository(repository: RecentlyViewedDataRepository): RecentlyViewedRepository
+
+    @Singleton
+    @Binds
+    fun bindSearchQueryRepository(repository: SearchQueryDataRepository): SearchQueryRepository
+
+    @Singleton
+    @Binds
+    fun bindSearchQueryLocalDataSource(dataSource: SearchQueryLocalDataSource): SearchQueryDataSource.Local
 }
 
 @Module
@@ -62,6 +72,13 @@ object DataProvideModule {
     @JvmStatic
     @Provides
     fun provideImageDocumentMapper(): ImageDocumentMapper = ImageDocumentMapper
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideSearchQueryDao(application: Application): SearchQueryDao {
+        return SearchQueryDatabase.getInstance(application).getDao()
+    }
 
 
 }

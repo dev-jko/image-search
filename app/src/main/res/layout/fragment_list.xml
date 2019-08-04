@@ -43,7 +43,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         android:iconifiedByDefault="false"
-                        queryListener="@{searchVm}"
+                        queryListener="@{searchVm.inputs}"
+                        android:textSize="30sp"
                 />
 
 

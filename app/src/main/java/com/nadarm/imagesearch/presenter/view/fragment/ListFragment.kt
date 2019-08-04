@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+import android.widget.AutoCompleteTextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -15,6 +15,7 @@ import com.nadarm.imagesearch.databinding.FragmentListBinding
 import com.nadarm.imagesearch.di.AndroidApplication
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
+import com.nadarm.imagesearch.presenter.view.adapter.SuggestionCursorAdapter
 import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
 import com.nadarm.imagesearch.presenter.viewModel.ListViewModel
 import com.nadarm.imagesearch.presenter.viewModel.RecentlyViewedImageViewModel
@@ -46,7 +47,8 @@ class ListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
+        this.binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
         this.binding.lifecycleOwner = this
         return this.binding.root
     }
@@ -59,18 +61,17 @@ class ListFragment : Fragment() {
         this.binding.adapter = ImageAdapter(this.listVm)
         this.binding.listVm = this.listVm
         this.binding.searchVm = this.searchVm
+        this.binding.searchView.suggestionsAdapter =
+            SuggestionCursorAdapter(this.binding.searchView, context!!, null, false)
+        val searchAutoCompleteTextView = this.binding.searchView
+            .findViewById(R.id.search_src_text) as AutoCompleteTextView
+        searchAutoCompleteTextView.setDropDownBackgroundResource(R.color.noColor)
 
 
         this.searchVm.outputs.querySuggestions()
-            .subscribe {
-//                this.binding.searchView.suggestionsAdapter.cursor = Cursor(it)
-            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::updateSuggestions)
             .addTo(compositeDisposable)
-
-
-
-
-
 
         this.listVm.outputs.startDetailFragment()
             .observeOn(AndroidSchedulers.mainThread())
@@ -104,6 +105,11 @@ class ListFragment : Fragment() {
                 val position = layoutManager.findFirstVisibleItemPosition()
                 this.listVm.inputs.savePosition(position)
             }
+    }
+
+    private fun updateSuggestions(suggestions: Cursor) {
+        this.binding.searchView.suggestionsAdapter.changeCursor(suggestions)
+        this.binding.searchView.suggestionsAdapter.notifyDataSetChanged()
     }
 
     private fun selectSpanCount(size: Int) {
