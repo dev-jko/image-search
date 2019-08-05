@@ -14,8 +14,8 @@ import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentListBinding
 import com.nadarm.imagesearch.di.AndroidApplication
 import com.nadarm.imagesearch.domain.model.ImageDocument
+import com.nadarm.imagesearch.presenter.model.SealedViewHolderData
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
-import com.nadarm.imagesearch.presenter.view.adapter.SealedViewHolderData
 import com.nadarm.imagesearch.presenter.view.adapter.SuggestionCursorAdapter
 import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
 import com.nadarm.imagesearch.presenter.viewModel.ListViewModel
@@ -133,7 +133,8 @@ class ListFragment : Fragment() {
                 return when (binding.adapter!!.getItemViewClass(position)) {
                     is SealedViewHolderData.ImageItem -> 1
                     is SealedViewHolderData.HeaderItem -> count
-                    is SealedViewHolderData.FooterItem -> count
+                    is SealedViewHolderData.FooterOneBtnItem -> count
+                    is SealedViewHolderData.FooterTwoBtnItem -> count
                 }
             }
         }

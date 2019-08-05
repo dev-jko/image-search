@@ -2,7 +2,7 @@ package com.nadarm.imagesearch.presenter.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.nadarm.imagesearch.domain.model.ImageDocument
-import com.nadarm.imagesearch.domain.useCase.GetImageDocuments
+import com.nadarm.imagesearch.domain.useCase.GetQueryResponse
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -24,7 +24,7 @@ interface DetailViewModel {
 
     @Singleton
     class ViewModelImpl @Inject constructor(
-        private val getImageDocuments: GetImageDocuments
+        private val getQueryResponse: GetQueryResponse
     ) : ViewModel(), Inputs, Outputs {
 
         private val selectedImage: PublishSubject<ImageDocument> = PublishSubject.create()
@@ -42,9 +42,10 @@ interface DetailViewModel {
 
             this.selectedImage
                 .flatMapSingle {
-                    this.getImageDocuments.execute(it.query, it.page, 0, 80)
+                    this.getQueryResponse.execute(it.query, it.page)
                         .subscribeOn(Schedulers.io())
                 }
+                .map { it.documents }
                 .subscribe(this.imageDocuments)
 
             this.selectedImage

@@ -7,10 +7,11 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.nadarm.imagesearch.BR
 import com.nadarm.imagesearch.R
+import com.nadarm.imagesearch.presenter.model.SealedViewHolderData
 
 class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
 
-    interface Delegate : SealedViewHolderData.ImageItem.Delegate
+    interface Delegate : SealedViewHolderData.ImageItem.Delegate, SealedViewHolderData.FooterOneBtnItem.Delegate
 
     private var itemList: List<SealedViewHolderData> = emptyList()
 
@@ -24,7 +25,8 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
         return when (itemList[position]) {
             is SealedViewHolderData.ImageItem -> R.layout.item_image_list
             is SealedViewHolderData.HeaderItem -> R.layout.item_header_list
-            is SealedViewHolderData.FooterItem -> R.layout.item_footer_list
+            is SealedViewHolderData.FooterOneBtnItem -> R.layout.item_footer_one_btn_list
+            is SealedViewHolderData.FooterTwoBtnItem -> R.layout.item_footer_two_btn_list
         }
     }
 

@@ -3,9 +3,10 @@ package com.nadarm.imagesearch.presenter.viewModel
 import android.view.View
 import androidx.lifecycle.ViewModel
 import com.nadarm.imagesearch.domain.model.ImageDocument
-import com.nadarm.imagesearch.domain.useCase.GetImageDocuments
+import com.nadarm.imagesearch.domain.useCase.GetQueryResponse
+import com.nadarm.imagesearch.presenter.model.SealedViewHolderData
+import com.nadarm.imagesearch.presenter.model.mapper.SealedViewHolderDataMapper
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
-import com.nadarm.imagesearch.presenter.view.adapter.SealedViewHolderData
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -31,14 +32,16 @@ interface ListViewModel {
 
     @Singleton
     class ViewModelImpl @Inject constructor(
-        private val getImageDocuments: GetImageDocuments
+        private val getQueryResponse: GetQueryResponse,
+        private val mapper: SealedViewHolderDataMapper
     ) : ViewModel(), Inputs, Outputs {
 
         private val compositeDisposable = CompositeDisposable()
 
-        private val query: PublishSubject<String> = PublishSubject.create()
+        private val query: PublishSubject<Pair<String, Int>> = PublishSubject.create()
         private val imageClicked: PublishSubject<ImageDocument> = PublishSubject.create()
         private val savePosition: PublishSubject<Int> = PublishSubject.create()
+        private val pageChangeButtonClicked: PublishSubject<Pair<String, Int>> = PublishSubject.create()
 
         private val itemList: BehaviorSubject<List<SealedViewHolderData>> = BehaviorSubject.create()
         private val displayProgress: BehaviorSubject<Int> = BehaviorSubject.create()
@@ -51,21 +54,18 @@ interface ListViewModel {
 
         init {
             this.query.flatMapSingle {
-                this.getImageDocuments.execute(it, 1, 0, 80)
-                    .map {
-                        val itemList: MutableList<SealedViewHolderData> = it.map { imageDocument ->
-                            SealedViewHolderData.ImageItem(imageDocument, this.inputs)
-                        }.toMutableList()
-                        itemList.add(0, SealedViewHolderData.HeaderItem("MyHeader"))
-                        itemList.add(SealedViewHolderData.FooterItem("MyFooter"))
-                        return@map itemList
-                    }
+                this.getQueryResponse.execute(it.first, it.second)
+                    .map { mapper.mapToSealedViewHolderData(it, this) }
                     .subscribeOn(Schedulers.io())
                     .doOnSubscribe { this.displayProgress.onNext(View.VISIBLE) }
                     .doFinally { this.displayProgress.onNext(View.GONE) }
             }
                 .doOnNext { this.savePosition(0) }
                 .subscribe(this.itemList)
+
+            this.pageChangeButtonClicked
+                .throttleFirst(600, TimeUnit.MILLISECONDS)
+                .subscribe(this.query)
 
             this.savePosition.subscribe(this.restorePosition)
         }
@@ -76,7 +76,7 @@ interface ListViewModel {
         override fun restorePosition(): Observable<Int> = this.restorePosition
 
         override fun query(query: String) {
-            this.query.onNext(query)
+            this.query.onNext(query to 1)
         }
 
         override fun imageClicked(imageDocument: ImageDocument) {
@@ -85,6 +85,10 @@ interface ListViewModel {
 
         override fun savePosition(position: Int) {
             this.savePosition.onNext(position)
+        }
+
+        override fun pageChangeButtonClicked(query: String, nextPage: Int) {
+            this.pageChangeButtonClicked.onNext(query to nextPage)
         }
 
         override fun onCleared() {

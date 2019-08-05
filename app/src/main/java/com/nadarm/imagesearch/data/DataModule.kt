@@ -1,16 +1,16 @@
 package com.nadarm.imagesearch.data
 
 import android.app.Application
-import com.nadarm.imagesearch.data.cache.ImageDocumentCacheDataSource
+import com.nadarm.imagesearch.data.cache.QueryResponseCacheDataSource
 import com.nadarm.imagesearch.data.cache.RecentlyViewedCacheDataSource
 import com.nadarm.imagesearch.data.local.SearchQueryDao
 import com.nadarm.imagesearch.data.local.SearchQueryDatabase
 import com.nadarm.imagesearch.data.local.SearchQueryLocalDataSource
-import com.nadarm.imagesearch.data.model.mapper.ImageDocumentMapper
-import com.nadarm.imagesearch.data.remote.ImageDocumentRemoteDataSource
+import com.nadarm.imagesearch.data.model.mapper.QueryResponseMapper
+import com.nadarm.imagesearch.data.remote.QueryResponseRemoteDataSource
 import com.nadarm.imagesearch.data.remote.api.ApiService
 import com.nadarm.imagesearch.data.repository.*
-import com.nadarm.imagesearch.domain.repository.ImageDocumentRepository
+import com.nadarm.imagesearch.domain.repository.QueryResponseRepository
 import com.nadarm.imagesearch.domain.repository.RecentlyViewedRepository
 import com.nadarm.imagesearch.domain.repository.SearchQueryRepository
 import dagger.Binds
@@ -26,15 +26,15 @@ interface DataBindModule {
 
     @Singleton
     @Binds
-    fun bindImageDocumentRemoteDataSource(dataSource: ImageDocumentRemoteDataSource): ImageDocumentDataSource.Remote
+    fun bindQueryResponseRemoteDataSource(dataSource: QueryResponseRemoteDataSource): QueryResponseDataSource.Remote
 
     @Singleton
     @Binds
-    fun bindImageDocumentCacheDataSource(dataSource: ImageDocumentCacheDataSource): ImageDocumentDataSource.Cache
+    fun bindQueryResponseCacheDataSource(dataSource: QueryResponseCacheDataSource): QueryResponseDataSource.Cache
 
     @Singleton
     @Binds
-    fun bindImageRepository(repository: ImageDocumentDataRepository): ImageDocumentRepository
+    fun bindQueryResponseRepository(repository: QueryResponseDataRepository): QueryResponseRepository
 
     @Singleton
     @Binds
@@ -68,10 +68,6 @@ object DataProvideModule {
             .build()
         return retrofit.create(ApiService::class.java)
     }
-
-    @JvmStatic
-    @Provides
-    fun provideImageDocumentMapper(): ImageDocumentMapper = ImageDocumentMapper
 
     @JvmStatic
     @Singleton
