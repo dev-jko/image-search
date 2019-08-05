@@ -12,6 +12,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.domain.model.ImageDocument
 
 @BindingAdapter("bindUrl", "bindProgressBar", requireAll = false)
@@ -39,7 +40,9 @@ fun loadImage(view: ImageView, url: String?, progressBar: ProgressBar?) {
                 progressBar?.visibility = View.GONE
                 return false
             }
-        }).into(view)
+        })
+            .error(R.drawable.error)
+            .into(view)
     }
 }
 
