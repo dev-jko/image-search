@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="item"
+                  type="com.nadarm.imagesearch.presenter.view.adapter.SealedViewHolderData.HeaderItem"/>
+    </data>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorGray"
+    >
+
+        <TextView
+                android:id="@+id/itemHeaderListTextView"
+                android:text="@{item.text}"
+                android:gravity="center"
+                android:textColor="@color/colorBlack"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+        />
+
+    </LinearLayout>
+</layout>

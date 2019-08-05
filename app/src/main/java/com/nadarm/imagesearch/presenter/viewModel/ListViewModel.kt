@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import com.nadarm.imagesearch.domain.useCase.GetImageDocuments
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
+import com.nadarm.imagesearch.presenter.view.adapter.SealedViewHolderData
 import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -21,7 +23,7 @@ interface ListViewModel {
     }
 
     interface Outputs {
-        fun imageDocuments(): Observable<List<ImageDocument>>
+        fun itemList(): Observable<List<SealedViewHolderData>>
         fun displayProgress(): Observable<Int>
         fun startDetailFragment(): Observable<ImageDocument>
         fun restorePosition(): Observable<Int>
@@ -32,11 +34,13 @@ interface ListViewModel {
         private val getImageDocuments: GetImageDocuments
     ) : ViewModel(), Inputs, Outputs {
 
+        private val compositeDisposable = CompositeDisposable()
+
         private val query: PublishSubject<String> = PublishSubject.create()
         private val imageClicked: PublishSubject<ImageDocument> = PublishSubject.create()
         private val savePosition: PublishSubject<Int> = PublishSubject.create()
 
-        private val imageDocuments: BehaviorSubject<List<ImageDocument>> = BehaviorSubject.create()
+        private val itemList: BehaviorSubject<List<SealedViewHolderData>> = BehaviorSubject.create()
         private val displayProgress: BehaviorSubject<Int> = BehaviorSubject.create()
         private val startDetailFragment: Observable<ImageDocument> =
             this.imageClicked.throttleFirst(600, TimeUnit.MILLISECONDS)
@@ -48,17 +52,25 @@ interface ListViewModel {
         init {
             this.query.flatMapSingle {
                 this.getImageDocuments.execute(it, 1, 0, 80)
+                    .map {
+                        val itemList: MutableList<SealedViewHolderData> = it.map { imageDocument ->
+                            SealedViewHolderData.ImageItem(imageDocument, this.inputs)
+                        }.toMutableList()
+                        itemList.add(0, SealedViewHolderData.HeaderItem("MyHeader"))
+                        itemList.add(SealedViewHolderData.FooterItem("MyFooter"))
+                        return@map itemList
+                    }
                     .subscribeOn(Schedulers.io())
                     .doOnSubscribe { this.displayProgress.onNext(View.VISIBLE) }
                     .doFinally { this.displayProgress.onNext(View.GONE) }
             }
                 .doOnNext { this.savePosition(0) }
-                .subscribe(this.imageDocuments)
+                .subscribe(this.itemList)
 
             this.savePosition.subscribe(this.restorePosition)
         }
 
-        override fun imageDocuments(): Observable<List<ImageDocument>> = this.imageDocuments
+        override fun itemList(): Observable<List<SealedViewHolderData>> = this.itemList
         override fun displayProgress(): Observable<Int> = this.displayProgress
         override fun startDetailFragment(): Observable<ImageDocument> = this.startDetailFragment
         override fun restorePosition(): Observable<Int> = this.restorePosition
@@ -73,6 +85,11 @@ interface ListViewModel {
 
         override fun savePosition(position: Int) {
             this.savePosition.onNext(position)
+        }
+
+        override fun onCleared() {
+            super.onCleared()
+            this.compositeDisposable.clear()
         }
     }
 }

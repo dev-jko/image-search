@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <variable name="imageDocument" type="com.nadarm.imagesearch.domain.model.ImageDocument"/>
-        <variable name="delegate"
-                  type="com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter.ViewHolder.Delegate"/>
+        <variable name="item"
+                  type="com.nadarm.imagesearch.presenter.view.adapter.SealedViewHolderData.ImageItem"/>
     </data>
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -11,7 +10,7 @@
             android:background="@color/colorWhite"
             android:layout_margin="3dp"
             android:elevation="6dp"
-            android:onClick="@{() -> delegate.imageClicked(imageDocument)}"
+            android:onClick="@{() -> item.delegate.imageClicked(item.imageDocument)}"
     >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,7 +24,7 @@
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
                     android:id="@+id/imageView"
-                    bindUrl="@{imageDocument.thumbnailUrl}"
+                    bindUrl="@{item.imageDocument.thumbnailUrl}"
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
