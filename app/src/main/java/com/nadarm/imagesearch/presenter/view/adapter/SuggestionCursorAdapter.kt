@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.cursoradapter.widget.CursorAdapter
 import com.nadarm.imagesearch.R
-import kotlinx.android.synthetic.main.search_suggestion_item.view.*
+import kotlinx.android.synthetic.main.item_search_suggestion.view.*
 
 class SuggestionCursorAdapter(
     private val searchView: SearchView,
@@ -16,7 +16,7 @@ class SuggestionCursorAdapter(
 ) : CursorAdapter(context, c, autoRequery) {
 
     override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
-        return LayoutInflater.from(context).inflate(R.layout.search_suggestion_item, parent, false)
+        return LayoutInflater.from(context).inflate(R.layout.item_search_suggestion, parent, false)
     }
 
     override fun bindView(view: View, context: Context, cursor: Cursor) {

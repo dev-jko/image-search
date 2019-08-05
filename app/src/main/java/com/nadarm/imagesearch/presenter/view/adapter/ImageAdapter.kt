@@ -3,49 +3,61 @@ package com.nadarm.imagesearch.presenter.view.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.nadarm.imagesearch.BR
 import com.nadarm.imagesearch.R
-import com.nadarm.imagesearch.databinding.ImageListItemBinding
-import com.nadarm.imagesearch.domain.model.ImageDocument
+import com.nadarm.imagesearch.presenter.model.SealedViewHolderData
 
-class ImageAdapter(
-    private val delegate: Delegate
-) : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
+class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
 
-    interface Delegate : ViewHolder.Delegate
+    interface Delegate : SealedViewHolderData.ImageItem.Delegate, SealedViewHolderData.FooterOneBtnItem.Delegate
 
-    private var documents: List<ImageDocument> = emptyList()
+    private var itemList: List<SealedViewHolderData> = emptyList()
 
 
-    fun refresh(newDocuments: List<ImageDocument>) {
-        this.documents = newDocuments
+    fun refresh(newDocuments: List<SealedViewHolderData>) {
+        this.itemList = newDocuments
         notifyDataSetChanged()
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return when (itemList[position]) {
+            is SealedViewHolderData.ImageItem -> R.layout.item_image_list
+            is SealedViewHolderData.HeaderItem -> R.layout.item_header_list
+            is SealedViewHolderData.FooterOneBtnItem -> R.layout.item_footer_one_btn_list
+            is SealedViewHolderData.FooterTwoBtnItem -> R.layout.item_footer_two_btn_list
+        }
+    }
+
+    fun getItemViewClass(position: Int): SealedViewHolderData {
+        return this.itemList[position]
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding: ImageListItemBinding = DataBindingUtil.inflate(inflater, R.layout.image_list_item, parent, false)
+        val binding: ViewDataBinding =
+            DataBindingUtil.inflate(inflater, viewType, parent, false)
         return ViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = this.documents.size
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(this.documents[position], this.delegate)
+        holder.bind(this.itemList[position])
     }
+
+    override fun getItemCount(): Int = this.itemList.size
 
 
     class ViewHolder(
-        private val binding: ImageListItemBinding
+        private val binding: ViewDataBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(document: ImageDocument, delegate: Delegate) {
-            binding.imageDocument = document
-            binding.delegate = delegate
-        }
-
-        interface Delegate {
-            fun imageClicked(imageDocument: ImageDocument)
+        fun bind(item: SealedViewHolderData) {
+            binding.setVariable(BR.item, item)
+            binding.executePendingBindings()
         }
     }
+
 }
+

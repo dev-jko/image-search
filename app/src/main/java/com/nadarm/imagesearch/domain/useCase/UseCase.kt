@@ -2,7 +2,12 @@ package com.nadarm.imagesearch.domain.useCase
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
+
+interface SingleUseCase<Type> {
+    fun execute(): Single<Type>
+}
 
 interface SingleUseCase1<Param1, Type> {
     fun execute(param1: Param1): Single<Type>
@@ -22,4 +27,8 @@ interface CompletableUseCase1<Param1> {
 
 interface FlowableUseCase<Type> {
     fun execute(): Flowable<Type>
+}
+
+interface ObservableUseCase<Type> {
+    fun execute(): Observable<Type>
 }

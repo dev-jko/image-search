@@ -14,11 +14,11 @@ import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentListBinding
 import com.nadarm.imagesearch.di.AndroidApplication
 import com.nadarm.imagesearch.domain.model.ImageDocument
+import com.nadarm.imagesearch.presenter.model.SealedViewHolderData
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
 import com.nadarm.imagesearch.presenter.view.adapter.SuggestionCursorAdapter
 import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
 import com.nadarm.imagesearch.presenter.viewModel.ListViewModel
-import com.nadarm.imagesearch.presenter.viewModel.RecentlyViewedImageViewModel
 import com.nadarm.imagesearch.presenter.viewModel.SearchViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -36,8 +36,6 @@ class ListFragment : Fragment() {
     lateinit var listVm: ListViewModel.ViewModelImpl
     @Inject
     lateinit var searchVm: SearchViewModel.ViewModelImpl
-    @Inject
-    lateinit var recentlyVm: RecentlyViewedImageViewModel.ViewModelImpl
     @Inject
     lateinit var detailVm: DetailViewModel.ViewModelImpl
 
@@ -58,7 +56,7 @@ class ListFragment : Fragment() {
 
         (activity!!.application as AndroidApplication).getAppComponent().inject(this)
 
-        this.binding.adapter = ImageAdapter(this.listVm)
+        this.binding.adapter = ImageAdapter()
         this.binding.listVm = this.listVm
         this.binding.searchVm = this.searchVm
         this.binding.searchView.suggestionsAdapter =
@@ -68,20 +66,23 @@ class ListFragment : Fragment() {
         searchAutoCompleteTextView.setDropDownBackgroundResource(R.color.noColor)
 
 
+
         this.searchVm.outputs.querySuggestions()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::updateSuggestions)
             .addTo(compositeDisposable)
 
         this.listVm.outputs.startDetailFragment()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::startDetailFragment)
             .addTo(compositeDisposable)
 
-        this.listVm.outputs.imageDocuments()
+        this.listVm.outputs.itemList()
             .withLatestFrom(
                 this.listVm.outputs.restorePosition(),
-                BiFunction<List<ImageDocument>, Int, Pair<List<ImageDocument>, Int>> { documents, position ->
+                BiFunction<List<SealedViewHolderData>, Int, Pair<List<SealedViewHolderData>, Int>> { documents, position ->
                     documents to position
                 }
             )
@@ -96,6 +97,7 @@ class ListFragment : Fragment() {
             .addTo(compositeDisposable)
 
         this.searchVm.outputs.query()
+            .subscribeOn(Schedulers.io())
             .subscribe(this.listVm.inputs::query)
             .addTo(compositeDisposable)
 
@@ -120,15 +122,28 @@ class ListFragment : Fragment() {
     }
 
     private fun setGridLayoutSpanCount(count: Int) {
-        if (count in 1..4) {
-            (this.binding.imageRecyclerView.layoutManager as GridLayoutManager).spanCount = count
+        if (count !in 1..4) {
+            return
+        }
+
+        (this.binding.imageRecyclerView.layoutManager as GridLayoutManager).spanCount = count
+        val layoutManager = (this.binding.imageRecyclerView.layoutManager as GridLayoutManager)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (binding.adapter!!.getItemViewClass(position)) {
+                    is SealedViewHolderData.ImageItem -> 1
+                    is SealedViewHolderData.HeaderItem -> count
+                    is SealedViewHolderData.FooterOneBtnItem -> count
+                    is SealedViewHolderData.FooterTwoBtnItem -> count
+                }
+            }
         }
     }
 
-    private fun refreshDocuments(documentsAndPosition: Pair<List<ImageDocument>, Int>) {
-        this.selectSpanCount(documentsAndPosition.first.size)
-        this.binding.adapter?.refresh(documentsAndPosition.first)
-        this.binding.imageRecyclerView.scrollToPosition(documentsAndPosition.second)
+    private fun refreshDocuments(itemListAndPosition: Pair<List<SealedViewHolderData>, Int>) {
+        this.selectSpanCount(itemListAndPosition.first.size)
+        this.binding.adapter?.refresh(itemListAndPosition.first)
+        this.binding.imageRecyclerView.scrollToPosition(itemListAndPosition.second)
     }
 
     private fun displayProgress(visibility: Int) {

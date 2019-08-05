@@ -3,7 +3,7 @@ package com.nadarm.imagesearch.data.repository
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import com.nadarm.imagesearch.domain.repository.RecentlyViewedRepository
 import io.reactivex.Completable
-import io.reactivex.Flowable
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,7 +16,7 @@ class RecentlyViewedDataRepository @Inject constructor(
         return this.cache.addRecentlyImageDocument(imageDocument)
     }
 
-    override fun getRecentlyImageDocuments(): Flowable<List<ImageDocument>> {
+    override fun getRecentlyImageDocuments(): Single<List<ImageDocument>> {
         return this.cache.getRecentlyImageDocuments()
     }
 }
