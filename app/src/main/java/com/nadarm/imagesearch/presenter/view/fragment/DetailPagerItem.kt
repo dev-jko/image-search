@@ -10,7 +10,10 @@ import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.ItemDetailPagerBinding
 import com.nadarm.imagesearch.domain.model.ImageDocument
 
-class DetailPagerItem(private val imageDocument: ImageDocument) : Fragment() {
+class DetailPagerItem(
+    private val imageDocument: ImageDocument,
+    private val delegate: Delegate
+) : Fragment() {
 
     private lateinit var binding: ItemDetailPagerBinding
 
@@ -23,5 +26,22 @@ class DetailPagerItem(private val imageDocument: ImageDocument) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         this.binding.imageDocument = this.imageDocument
+        this.binding.delegate = this.delegate
+
+        val info = this.binding.infoLayout
+        this.binding.root.setOnClickListener {
+            if (info.visibility == View.GONE) {
+                info.visibility = View.VISIBLE
+            } else {
+                info.visibility = View.GONE
+            }
+        }
+
     }
+
+
+    interface Delegate {
+        fun linkClicked(url: String)
+    }
+
 }

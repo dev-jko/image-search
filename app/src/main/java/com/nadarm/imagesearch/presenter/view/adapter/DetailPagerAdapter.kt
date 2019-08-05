@@ -6,7 +6,10 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import com.nadarm.imagesearch.domain.model.ImageDocument
 import com.nadarm.imagesearch.presenter.view.fragment.DetailPagerItem
 
-class DetailPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class DetailPagerAdapter(
+    fm: FragmentManager,
+    private val delegate: Delegate
+) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private var imageDocuments: List<ImageDocument> = emptyList()
 
@@ -17,14 +20,10 @@ class DetailPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BE
 
     override fun getItem(position: Int): Fragment {
 
-        return DetailPagerItem(imageDocuments[position])
+        return DetailPagerItem(imageDocuments[position], delegate)
     }
 
     override fun getCount(): Int = this.imageDocuments.size
 
-    interface Delegate {
-        fun firstIndexReached()
-        fun lastIndexReached()
-    }
-
+    interface Delegate : DetailPagerItem.Delegate
 }
