@@ -1,5 +1,7 @@
 package com.nadarm.imagesearch.presenter.view.fragment
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import com.nadarm.imagesearch.databinding.FragmentDetailBinding
 import com.nadarm.imagesearch.di.AndroidApplication
 import com.nadarm.imagesearch.presenter.view.adapter.DetailPagerAdapter
 import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
@@ -37,7 +40,7 @@ class DetailFragment : Fragment() {
 
         (activity!!.application as AndroidApplication).getAppComponent().inject(this)
 
-        val pagerAdapter: DetailPagerAdapter = DetailPagerAdapter(childFragmentManager)
+        val pagerAdapter: DetailPagerAdapter = DetailPagerAdapter(childFragmentManager, this.detailVm.inputs)
         this.binding.detailViewPager.adapter = pagerAdapter
         this.binding.detailVm = this.detailVm
 
@@ -51,6 +54,18 @@ class DetailFragment : Fragment() {
         this.detailVm.outputs.currentPageAndIndex()
             .subscribe { this.binding.detailViewPager.currentItem = it.second }
             .addTo(compositeDisposable)
+
+        this.detailVm.outputs.currentPageAndIndex()
+
+        this.detailVm.outputs.openUrlLink()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::openUrlLink)
+            .addTo(compositeDisposable)
+    }
+
+    private fun openUrlLink(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 
     override fun onDestroy() {
