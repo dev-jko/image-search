@@ -48,14 +48,15 @@ interface ListViewModel {
         private val savePosition: PublishSubject<Int> = PublishSubject.create()
         private val pageChangeButtonClicked: PublishSubject<Pair<String, Int>> = PublishSubject.create()
         private val retrySearch: PublishProcessor<Unit> = PublishProcessor.create()
+        private val queryResponseError: PublishSubject<Unit> = PublishSubject.create()
 
         private val itemList: BehaviorSubject<List<SealedViewHolderData>> = BehaviorSubject.create()
         private val displayProgress: BehaviorSubject<Int> = BehaviorSubject.create()
         private val startDetailFragment: Observable<ImageDocument> =
             this.imageClicked.throttleFirst(600, TimeUnit.MILLISECONDS)
         private val restorePosition: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
-        private val showSnackBar: BehaviorSubject<Unit> = BehaviorSubject.create()
-        private val retry: Flowable<Unit> = this.retrySearch.throttleFirst(1000, TimeUnit.MILLISECONDS)
+        private val showSnackBar: Observable<Unit> = this.queryResponseError
+        private val retry: Flowable<Unit> = this.retrySearch
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -68,7 +69,7 @@ interface ListViewModel {
                         .subscribeOn(Schedulers.io())
                         .doOnSubscribe { this.displayProgress.onNext(View.VISIBLE) }
                         .doFinally { this.displayProgress.onNext(View.GONE) }
-                        .doOnError { this.showSnackBar.onNext(Unit) }
+                        .doOnError { this.queryResponseError.onNext(Unit) }
                         .retryWhen { errors ->
                             errors.zipWith(this.retry) { o: Throwable, _: Unit -> Flowable.just(o) }
                         }

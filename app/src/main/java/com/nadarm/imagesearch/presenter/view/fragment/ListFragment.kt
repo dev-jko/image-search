@@ -122,7 +122,7 @@ class ListFragment : Fragment() {
     }
 
     private fun printLog(throwable: Throwable) {
-        Log.e(this.tag, "Do something Error Log : $throwable.message")
+        Log.e(this.tag, "Do something with Error Log : $throwable.message")
     }
 
     private fun updateSuggestions(suggestions: Cursor) {
