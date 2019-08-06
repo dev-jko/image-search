@@ -57,29 +57,20 @@ interface ListViewModel {
         private val showSnackBar: BehaviorSubject<Unit> = BehaviorSubject.create()
         private val retry: Flowable<Unit> = this.retrySearch.throttleFirst(1000, TimeUnit.MILLISECONDS)
 
-
         val inputs: Inputs = this
         val outputs: Outputs = this
 
         init {
-            this.retry.publish().connect()
 
             this.query
-                .flatMapSingle {
-                    this.getQueryResponse.execute(it.first, it.second)
+                .flatMapSingle { queryAndPage ->
+                    this.getQueryResponse.execute(queryAndPage.first, queryAndPage.second)
                         .subscribeOn(Schedulers.io())
                         .doOnSubscribe { this.displayProgress.onNext(View.VISIBLE) }
                         .doFinally { this.displayProgress.onNext(View.GONE) }
-                        .retryWhen {
-                            this.showSnackBar.onNext(Unit)
-                            it.zipWith(this.retry) { o: Throwable, o2: Unit ->
-                                println(1)
-                                this.showSnackBar.onNext(Unit)
-                            }
-                                .doOnNext { println("next") }
-                                .doOnComplete { println("complete") }
-                                .doFinally { println("finally") }
-                                .subscribeOn(Schedulers.computation())
+                        .doOnError { this.showSnackBar.onNext(Unit) }
+                        .retryWhen { errors ->
+                            errors.zipWith(this.retry) { o: Throwable, _: Unit -> Flowable.just(o) }
                         }
                         .map { mapper.mapToSealedViewHolderData(it, this) }
                 }

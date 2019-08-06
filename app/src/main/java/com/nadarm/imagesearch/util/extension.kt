@@ -20,6 +20,7 @@ fun SearchView.setOnQueryListener(delegate: MySearchView.Delegate) {
         override fun onQueryTextSubmit(query: String?): Boolean {
             if (query != null) {
                 delegate.querySubmitted(query)
+                setQuery("", false)
                 clearFocus()
             }
             return true

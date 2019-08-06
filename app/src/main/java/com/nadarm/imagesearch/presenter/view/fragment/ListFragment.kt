@@ -110,13 +110,13 @@ class ListFragment : Fragment() {
 
         this.listVm.outputs.showSnackBar()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::showSnackBar)
+            .subscribe(this::showSnackBar, this::printLog)
             .addTo(compositeDisposable)
     }
 
 
     private fun showSnackBar(unit: Unit) {
-        Snackbar.make(this.binding.root, "Error!", Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(this.binding.root, "Network Error!!", Snackbar.LENGTH_INDEFINITE)
             .setAction("Try Again") { this.listVm.inputs.retrySearch() }
             .show()
     }
