@@ -2,6 +2,7 @@ package com.nadarm.imagesearch.presenter.view.fragment
 
 import android.database.Cursor
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.nadarm.imagesearch.R
 import com.nadarm.imagesearch.databinding.FragmentListBinding
 import com.nadarm.imagesearch.di.AndroidApplication
@@ -20,6 +22,7 @@ import com.nadarm.imagesearch.presenter.view.adapter.SuggestionCursorAdapter
 import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
 import com.nadarm.imagesearch.presenter.viewModel.ListViewModel
 import com.nadarm.imagesearch.presenter.viewModel.SearchViewModel
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
@@ -65,18 +68,30 @@ class ListFragment : Fragment() {
             .findViewById(R.id.search_src_text) as AutoCompleteTextView
         searchAutoCompleteTextView.setDropDownBackgroundResource(R.color.noColor)
 
-
+        this.binding.imageRecyclerView
+            .setOnScrollChangeListener { _, _, _, _, _ ->
+                val layoutManager = this.binding.imageRecyclerView.layoutManager as GridLayoutManager
+                val position = layoutManager.findFirstVisibleItemPosition()
+                this.listVm.inputs.savePosition(position)
+            }
 
         this.searchVm.outputs.querySuggestions()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::updateSuggestions)
+            .subscribe(this::updateSuggestions, this::printLog)
             .addTo(compositeDisposable)
 
         this.listVm.outputs.startDetailFragment()
+            .retryWhen {
+                it.flatMap<Unit> {
+                    Observable.create { emitter ->
+                        this.showSnackBar { emitter.onNext(Unit) }
+                    }
+                }
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::startDetailFragment)
+            .subscribe(this::startDetailFragment, this::printLog)
             .addTo(compositeDisposable)
 
         this.listVm.outputs.itemList()
@@ -86,27 +101,38 @@ class ListFragment : Fragment() {
                     documents to position
                 }
             )
+            .retryWhen {
+                it.flatMap<Unit> {
+                    Observable.create { emitter ->
+                        this.showSnackBar { emitter.onNext(Unit) }
+                    }
+                }
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::refreshDocuments)
+            .subscribe(this::refreshDocuments, this::printLog)
             .addTo(compositeDisposable)
 
         this.listVm.outputs.displayProgress()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::displayProgress)
+            .subscribe(this::displayProgress, this::printLog)
             .addTo(compositeDisposable)
 
         this.searchVm.outputs.query()
             .subscribeOn(Schedulers.io())
-            .subscribe(this.listVm.inputs::query)
+            .subscribe(this.listVm.inputs::query, this::printLog)
             .addTo(compositeDisposable)
+    }
 
-        this.binding.imageRecyclerView
-            .setOnScrollChangeListener { _, _, _, _, _ ->
-                val layoutManager = this.binding.imageRecyclerView.layoutManager as GridLayoutManager
-                val position = layoutManager.findFirstVisibleItemPosition()
-                this.listVm.inputs.savePosition(position)
-            }
+
+    private fun showSnackBar(callback: () -> (Unit)) {
+        Snackbar.make(this.binding.root, "Error!", Snackbar.LENGTH_INDEFINITE)
+            .setAction("Try Again") { callback() }
+            .show()
+    }
+
+    private fun printLog(throwable: Throwable) {
+        Log.e(this.tag, "Do something Error Log : $throwable.message")
     }
 
     private fun updateSuggestions(suggestions: Cursor) {
