@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="detailVm" type="com.nadarm.imagesearch.presenter.viewModel.DetailViewModel.ViewModelImpl"/>
+        <variable name="detailVm" type="com.nadarm.imagesearcher.presenter.viewModel.DetailViewModel.ViewModelImpl"/>
     </data>
     <FrameLayout
             android:layout_width="match_parent"

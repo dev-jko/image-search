@@ -5,7 +5,7 @@
 
         <variable
             name="item"
-            type="com.nadarm.imagesearch.presenter.model.SealedViewHolderData.HeaderItem" />
+            type="com.nadarm.imagesearcher.presenter.model.SealedViewHolderData.HeaderItem" />
     </data>
 
     <LinearLayout
