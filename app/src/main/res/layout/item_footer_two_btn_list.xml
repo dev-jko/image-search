@@ -9,11 +9,12 @@
     </data>
 
     <LinearLayout
+        android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorBlack"
-        android:orientation="horizontal"
-        android:elevation="6dp">
+        android:elevation="6dp"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/beforeButton"
@@ -21,10 +22,11 @@
             android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:layout_weight="1"
-            android:background="@color/colorBrown"
+            android:background="@color/colorWhite"
+            android:elevation="6dp"
             android:onClick="@{()->item.delegate.pageChangeButtonClicked(item.query, item.page-1)}"
             android:text="이전"
-            android:textColor="@color/colorYellow"
+            android:textColor="@color/colorBlack"
             android:textSize="20sp" />
 
         <Button
@@ -33,10 +35,11 @@
             android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:layout_weight="1"
-            android:background="@color/colorBrown"
+            android:background="@color/colorWhite"
+            android:elevation="6dp"
             android:onClick="@{()->item.delegate.pageChangeButtonClicked(item.query, item.page+1)}"
             android:text="다음"
-            android:textColor="@color/colorYellow"
+            android:textColor="@color/colorBlack"
             android:textSize="20sp" />
 
     </LinearLayout>

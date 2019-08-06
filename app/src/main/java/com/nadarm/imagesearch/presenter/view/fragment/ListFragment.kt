@@ -22,7 +22,6 @@ import com.nadarm.imagesearch.presenter.view.adapter.SuggestionCursorAdapter
 import com.nadarm.imagesearch.presenter.viewModel.DetailViewModel
 import com.nadarm.imagesearch.presenter.viewModel.ListViewModel
 import com.nadarm.imagesearch.presenter.viewModel.SearchViewModel
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
@@ -82,13 +81,6 @@ class ListFragment : Fragment() {
             .addTo(compositeDisposable)
 
         this.listVm.outputs.startDetailFragment()
-            .retryWhen {
-                it.flatMap<Unit> {
-                    Observable.create { emitter ->
-                        this.showSnackBar { emitter.onNext(Unit) }
-                    }
-                }
-            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::startDetailFragment, this::printLog)
@@ -101,13 +93,6 @@ class ListFragment : Fragment() {
                     documents to position
                 }
             )
-            .retryWhen {
-                it.flatMap<Unit> {
-                    Observable.create { emitter ->
-                        this.showSnackBar { emitter.onNext(Unit) }
-                    }
-                }
-            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::refreshDocuments, this::printLog)
@@ -122,12 +107,17 @@ class ListFragment : Fragment() {
             .subscribeOn(Schedulers.io())
             .subscribe(this.listVm.inputs::query, this::printLog)
             .addTo(compositeDisposable)
+
+        this.listVm.outputs.showSnackBar()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(this::showSnackBar)
+            .addTo(compositeDisposable)
     }
 
 
-    private fun showSnackBar(callback: () -> (Unit)) {
+    private fun showSnackBar(unit: Unit) {
         Snackbar.make(this.binding.root, "Error!", Snackbar.LENGTH_INDEFINITE)
-            .setAction("Try Again") { callback() }
+            .setAction("Try Again") { this.listVm.inputs.retrySearch() }
             .show()
     }
 

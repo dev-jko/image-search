@@ -7,8 +7,11 @@ import com.nadarm.imagesearch.domain.useCase.GetQueryResponse
 import com.nadarm.imagesearch.presenter.model.SealedViewHolderData
 import com.nadarm.imagesearch.presenter.model.mapper.SealedViewHolderDataMapper
 import com.nadarm.imagesearch.presenter.view.adapter.ImageAdapter
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.processors.PublishProcessor
+import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -21,6 +24,7 @@ interface ListViewModel {
     interface Inputs : ImageAdapter.Delegate {
         fun query(query: String)
         fun savePosition(position: Int)
+        fun retrySearch()
     }
 
     interface Outputs {
@@ -28,6 +32,7 @@ interface ListViewModel {
         fun displayProgress(): Observable<Int>
         fun startDetailFragment(): Observable<ImageDocument>
         fun restorePosition(): Observable<Int>
+        fun showSnackBar(): Observable<Unit>
     }
 
     @Singleton
@@ -42,24 +47,42 @@ interface ListViewModel {
         private val imageClicked: PublishSubject<ImageDocument> = PublishSubject.create()
         private val savePosition: PublishSubject<Int> = PublishSubject.create()
         private val pageChangeButtonClicked: PublishSubject<Pair<String, Int>> = PublishSubject.create()
+        private val retrySearch: PublishProcessor<Unit> = PublishProcessor.create()
 
         private val itemList: BehaviorSubject<List<SealedViewHolderData>> = BehaviorSubject.create()
         private val displayProgress: BehaviorSubject<Int> = BehaviorSubject.create()
         private val startDetailFragment: Observable<ImageDocument> =
             this.imageClicked.throttleFirst(600, TimeUnit.MILLISECONDS)
         private val restorePosition: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
+        private val showSnackBar: BehaviorSubject<Unit> = BehaviorSubject.create()
+        private val retry: Flowable<Unit> = this.retrySearch.throttleFirst(1000, TimeUnit.MILLISECONDS)
+
 
         val inputs: Inputs = this
         val outputs: Outputs = this
 
         init {
-            this.query.flatMapSingle {
-                this.getQueryResponse.execute(it.first, it.second)
-                    .map { mapper.mapToSealedViewHolderData(it, this) }
-                    .subscribeOn(Schedulers.io())
-                    .doOnSubscribe { this.displayProgress.onNext(View.VISIBLE) }
-                    .doFinally { this.displayProgress.onNext(View.GONE) }
-            }
+            this.retry.publish().connect()
+
+            this.query
+                .flatMapSingle {
+                    this.getQueryResponse.execute(it.first, it.second)
+                        .subscribeOn(Schedulers.io())
+                        .doOnSubscribe { this.displayProgress.onNext(View.VISIBLE) }
+                        .doFinally { this.displayProgress.onNext(View.GONE) }
+                        .retryWhen {
+                            this.showSnackBar.onNext(Unit)
+                            it.zipWith(this.retry) { o: Throwable, o2: Unit ->
+                                println(1)
+                                this.showSnackBar.onNext(Unit)
+                            }
+                                .doOnNext { println("next") }
+                                .doOnComplete { println("complete") }
+                                .doFinally { println("finally") }
+                                .subscribeOn(Schedulers.computation())
+                        }
+                        .map { mapper.mapToSealedViewHolderData(it, this) }
+                }
                 .doOnNext { this.savePosition(0) }
                 .subscribe(this.itemList)
 
@@ -74,6 +97,7 @@ interface ListViewModel {
         override fun displayProgress(): Observable<Int> = this.displayProgress
         override fun startDetailFragment(): Observable<ImageDocument> = this.startDetailFragment
         override fun restorePosition(): Observable<Int> = this.restorePosition
+        override fun showSnackBar(): Observable<Unit> = this.showSnackBar
 
         override fun query(query: String) {
             this.query.onNext(query to 1)
@@ -89,6 +113,10 @@ interface ListViewModel {
 
         override fun pageChangeButtonClicked(query: String, nextPage: Int) {
             this.pageChangeButtonClicked.onNext(query to nextPage)
+        }
+
+        override fun retrySearch() {
+            this.retrySearch.onNext(Unit)
         }
 
         override fun onCleared() {

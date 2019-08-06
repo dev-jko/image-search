@@ -9,21 +9,23 @@
     </data>
 
     <LinearLayout
+        android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorBlack"
         android:orientation="horizontal">
 
         <Button
+            android:elevation="6dp"
             android:id="@+id/button"
             android:layout_margin="1dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textSize="20sp"
-            android:background="@color/colorBrown"
+            android:background="@color/colorWhite"
             android:onClick="@{()->item.delegate.pageChangeButtonClicked(item.query, item.nextPage)}"
             android:text="@{item.btnText}"
-            android:textColor="@color/colorYellow" />
+            android:textColor="@color/colorBlack" />
     </LinearLayout>
 </layout>
