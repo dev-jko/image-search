@@ -5,7 +5,7 @@
 ## Preview
 
 ### 아이콘 & 스플래시 화면
-![icon and splash](./readme_resources/icon_and_splash.gif)
+![icon and splash](./readme_resources/icon_and_splash.gif){:width="50%"}
 
 ### 메인 화면(리스트 화면)
 ![search1](./readme_resources/search1.gif)
