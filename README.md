@@ -5,12 +5,12 @@
 ## Preview
 
 ### 아이콘 & 스플래시 화면
-![icon and splash](./readme_resources/icon_and_splash.gif | width=50)
+<img src="./readme_resources/icon_and_splash.gif"  min-width="300px" width="50%" alt="icon and splash">
 
 ### 메인 화면(리스트 화면)
-![search1](./readme_resources/search1.gif = 50x50)
+![search1](./readme_resources/search1.gif)
 
-![search2](./readme_resources/search2.gif){:height="24px" width="48px"}
+![search2](./readme_resources/search2.gif)
 - 이전에 검색했던 단어를 자동완성으로 보여준다.
 
 ![search_error](./readme_resources/search_error.gif)
