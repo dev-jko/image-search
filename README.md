@@ -35,6 +35,20 @@
 - 화면 터치 시 이미지가 있는 웹페이지 이름이 나오고 이름을 클릭하면 웹페이지로 이동한다.
 
 
+## Technologies Used
+- Android
+- Kotlin
+- RxKotlin
+- Clean Architecture
+- MVVM
+- Room
+- Dagger
+- Retrofit
+- Gson
+- Glide
+- Junit
+- Mockito
+
 
 ## UI
 - [x] 노란색/갈색/흰색
