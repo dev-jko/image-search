@@ -2,13 +2,13 @@ package com.nadarm.imagesearcher.presenter.viewModel
 
 import android.database.Cursor
 import androidx.lifecycle.ViewModel
+import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.useCase.AddSearchedQuery
 import com.nadarm.imagesearcher.domain.useCase.GetSuggestions
 import com.nadarm.imagesearcher.util.MySearchView
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -29,7 +29,8 @@ interface SearchViewModel {
     @Singleton
     class ViewModelImpl @Inject constructor(
         private val addSearchedQuery: AddSearchedQuery,
-        private val getSuggestions: GetSuggestions
+        private val getSuggestions: GetSuggestions,
+        private val schedulers: AppSchedulers
     ) : ViewModel(), Inputs, Outputs {
 
         private val compositeDisposable = CompositeDisposable()
@@ -37,7 +38,8 @@ interface SearchViewModel {
         private val querySubmitted: PublishSubject<String> = PublishSubject.create()
         private val queryChanged: PublishSubject<String> = PublishSubject.create()
 
-        private val query: Observable<String> = this.querySubmitted.throttleFirst(1000, TimeUnit.MILLISECONDS)
+        private val query: Observable<String> =
+            this.querySubmitted.throttleFirst(1000, TimeUnit.MILLISECONDS, schedulers.computation())
         private val querySuggestions: Observable<Cursor>
 
         val inputs: Inputs = this
@@ -47,16 +49,16 @@ interface SearchViewModel {
             this.querySubmitted
                 .flatMapCompletable {
                     this.addSearchedQuery.execute(it)
-                        .subscribeOn(Schedulers.io())
+                        .subscribeOn(schedulers.io())
                 }
                 .subscribe()
                 .addTo(compositeDisposable)
 
             this.querySuggestions = this.queryChanged
-                .debounce(600, TimeUnit.MILLISECONDS)
+                .debounce(600, TimeUnit.MILLISECONDS, schedulers.computation())
                 .flatMapSingle {
                     this.getSuggestions.execute(it)
-                        .subscribeOn(Schedulers.io())
+                        .subscribeOn(schedulers.io())
                 }
         }
 
