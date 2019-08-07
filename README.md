@@ -9,10 +9,11 @@
 <img src="./readme_resources/icon_and_splash.gif" width="30%" alt="icon and splash">
 
 ### 메인 화면(리스트 화면)
-
-<img src="./readme_resources/search1.gif" width="30%" alt="search1">
-<img src="./readme_resources/search2.gif" width="30%" alt="search2">
-<img src="./readme_resources/search_error.gif" width="30%" alt="search_error">
+<div>
+<img src="./readme_resources/search1.gif" width="30%" alt="search1" style="display: inline">
+<img src="./readme_resources/search2.gif" width="30%" alt="search2" style="display: inline">
+<img src="./readme_resources/search_error.gif" width="30%" alt="search_error" style="display: inline">
+</div>
 
 - 이전에 검색했던 단어를 자동완성으로 보여준다.
 - 에러 발생 시 스낵바로 메세지가 나오고 재시도 버튼을 누르면 검색을 다시 시도한다.
