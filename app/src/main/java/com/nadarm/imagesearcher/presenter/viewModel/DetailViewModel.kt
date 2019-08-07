@@ -1,11 +1,11 @@
 package com.nadarm.imagesearcher.presenter.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.domain.useCase.GetQueryResponse
 import com.nadarm.imagesearcher.presenter.view.adapter.DetailPagerAdapter
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
@@ -27,7 +27,8 @@ interface DetailViewModel {
 
     @Singleton
     class ViewModelImpl @Inject constructor(
-        private val getQueryResponse: GetQueryResponse
+        private val getQueryResponse: GetQueryResponse,
+        private val schedulers: AppSchedulers
     ) : ViewModel(), Inputs, Outputs {
 
         private val selectedImage: PublishSubject<ImageDocument> = PublishSubject.create()
@@ -36,7 +37,8 @@ interface DetailViewModel {
         private val loadImageDocument: BehaviorSubject<ImageDocument> = BehaviorSubject.create()
         private val imageDocuments: BehaviorSubject<List<ImageDocument>> = BehaviorSubject.create()
         private val currentPageAndIndex: BehaviorSubject<Pair<Int, Int>> = BehaviorSubject.create()
-        private val openUrlLink: Observable<String> = this.linkClicked.throttleFirst(600, TimeUnit.MILLISECONDS)
+        private val openUrlLink: Observable<String> =
+            this.linkClicked.throttleFirst(600, TimeUnit.MILLISECONDS, schedulers.computation())
 
         val inputs: Inputs = this
         val outputs: Outputs = this
@@ -48,7 +50,7 @@ interface DetailViewModel {
             this.selectedImage
                 .flatMapSingle {
                     this.getQueryResponse.execute(it.query, it.page)
-                        .subscribeOn(Schedulers.io())
+                        .subscribeOn(schedulers.io())
                 }
                 .map { it.documents }
                 .subscribe(this.imageDocuments)

@@ -5,8 +5,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.nadarm.imagesearcher.R
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class SplashActivity : AppCompatActivity() {
@@ -17,7 +19,8 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        Observable.timer(700, TimeUnit.MILLISECONDS)
+        Observable.timer(700, TimeUnit.MILLISECONDS, Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe { startMainActivityAndFinish() }
             .addTo(compositeDisposable)
     }

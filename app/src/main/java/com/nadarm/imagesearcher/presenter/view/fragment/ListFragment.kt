@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.nadarm.imagesearcher.R
 import com.nadarm.imagesearcher.databinding.FragmentListBinding
 import com.nadarm.imagesearcher.di.AndroidApplication
+import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.presenter.model.SealedViewHolderData
 import com.nadarm.imagesearcher.presenter.view.adapter.ImageAdapter
@@ -22,11 +23,9 @@ import com.nadarm.imagesearcher.presenter.view.adapter.SuggestionCursorAdapter
 import com.nadarm.imagesearcher.presenter.viewModel.DetailViewModel
 import com.nadarm.imagesearcher.presenter.viewModel.ListViewModel
 import com.nadarm.imagesearcher.presenter.viewModel.SearchViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -40,7 +39,8 @@ class ListFragment : Fragment() {
     lateinit var searchVm: SearchViewModel.ViewModelImpl
     @Inject
     lateinit var detailVm: DetailViewModel.ViewModelImpl
-
+    @Inject
+    lateinit var schedulers: AppSchedulers
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,14 +75,14 @@ class ListFragment : Fragment() {
             }
 
         this.searchVm.outputs.querySuggestions()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
             .subscribe(this::updateSuggestions, this::printLog)
             .addTo(compositeDisposable)
 
         this.listVm.outputs.startDetailFragment()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
             .subscribe(this::startDetailFragment, this::printLog)
             .addTo(compositeDisposable)
 
@@ -93,23 +93,23 @@ class ListFragment : Fragment() {
                     documents to position
                 }
             )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
             .subscribe(this::refreshDocuments, this::printLog)
             .addTo(compositeDisposable)
 
         this.listVm.outputs.displayProgress()
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(schedulers.ui())
             .subscribe(this::displayProgress, this::printLog)
             .addTo(compositeDisposable)
 
         this.searchVm.outputs.query()
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(schedulers.io())
             .subscribe(this.listVm.inputs::query, this::printLog)
             .addTo(compositeDisposable)
 
         this.listVm.outputs.showSnackBar()
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(schedulers.ui())
             .subscribe(this::showSnackBar, this::printLog)
             .addTo(compositeDisposable)
     }
