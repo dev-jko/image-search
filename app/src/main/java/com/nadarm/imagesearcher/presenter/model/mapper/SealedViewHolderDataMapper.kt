@@ -14,31 +14,49 @@ class SealedViewHolderDataMapper @Inject constructor() {
         queryResponse: QueryResponse,
         delegate: ImageAdapter.Delegate
     ): List<SealedViewHolderData> {
-        val itemList: MutableList<SealedViewHolderData> = ArrayList()
         val query = queryResponse.meta.query
         val page = queryResponse.meta.page
         val isEnd = queryResponse.meta.isEnd
 
-        val headerText: String = "$query 검색결과 : ${queryResponse.meta.totalCount}개"
-        itemList.add(SealedViewHolderData.HeaderItem(headerText))
-
-        val items = queryResponse.documents.map {
-            SealedViewHolderData.ImageItem(
-                it,
-                delegate
-            )
+        val itemList: MutableList<SealedViewHolderData> = ArrayList()
+        itemList.add(makeHeader(query, queryResponse))
+        itemList.addAll(makeImages(queryResponse, delegate))
+        val footer = makeFooter(query, page, isEnd, delegate)
+        if (footer != null) {
+            itemList.add(footer)
         }
-        itemList.addAll(items)
-
-        if (page == 1 && !isEnd) {
-            itemList.add(SealedViewHolderData.FooterOneBtnItem(query, "다음", page + 1, delegate))
-        } else if (page > 1 && isEnd) {
-            itemList.add(SealedViewHolderData.FooterOneBtnItem(query, "이전", page - 1, delegate))
-        } else if (page > 1 && !isEnd) {
-            itemList.add(SealedViewHolderData.FooterTwoBtnItem(query, page, delegate))
-        }
-
         return itemList
+    }
+
+    private fun makeFooter(
+        query: String,
+        page: Int,
+        isEnd: Boolean,
+        delegate: ImageAdapter.Delegate
+    ): SealedViewHolderData? {
+        return when {
+            page == 1 && !isEnd -> SealedViewHolderData.FooterOneBtnItem(query, "다음", page + 1, delegate)
+            page > 1 && isEnd -> SealedViewHolderData.FooterOneBtnItem(query, "이전", page - 1, delegate)
+            page > 1 && !isEnd -> SealedViewHolderData.FooterTwoBtnItem(query, page, delegate)
+            else -> null
+        }
+    }
+
+    private fun makeImages(
+        queryResponse: QueryResponse,
+        delegate: ImageAdapter.Delegate
+    ): List<SealedViewHolderData.ImageItem> {
+        return queryResponse.documents.map {
+            SealedViewHolderData.ImageItem(it, delegate)
+        }
+    }
+
+    private fun makeHeader(
+        query: String,
+        queryResponse: QueryResponse
+    ): SealedViewHolderData.HeaderItem {
+        val headerText: String = "$query 검색결과 : ${queryResponse.meta.totalCount}개"
+        return SealedViewHolderData.HeaderItem(headerText)
     }
 
 
