@@ -1,6 +1,7 @@
 package com.nadarm.imagesearcher.presenter.model.mapper
 
 import com.nadarm.imagesearcher.domain.model.QueryResponse
+import com.nadarm.imagesearcher.domain.model.SearchMeta
 import com.nadarm.imagesearcher.presenter.model.SealedViewHolderData
 import com.nadarm.imagesearcher.presenter.view.adapter.ImageAdapter
 import javax.inject.Inject
@@ -19,7 +20,7 @@ class SealedViewHolderDataMapper @Inject constructor() {
         val isEnd = queryResponse.meta.isEnd
 
         val itemList: MutableList<SealedViewHolderData> = ArrayList()
-        itemList.add(makeHeader(query, queryResponse))
+        itemList.add(makeHeader(query, queryResponse.meta))
         itemList.addAll(makeImages(queryResponse, delegate))
         val footer = makeFooter(query, page, isEnd, delegate)
         if (footer != null) {
@@ -53,9 +54,9 @@ class SealedViewHolderDataMapper @Inject constructor() {
 
     private fun makeHeader(
         query: String,
-        queryResponse: QueryResponse
+        meta: SearchMeta
     ): SealedViewHolderData.HeaderItem {
-        val headerText: String = "$query 검색결과 : ${queryResponse.meta.totalCount}개"
+        val headerText: String = "$query 검색결과 : ${meta.totalCount}개"
         return SealedViewHolderData.HeaderItem(headerText)
     }
 
