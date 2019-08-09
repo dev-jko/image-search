@@ -3,6 +3,7 @@
 고재두
 
 마스터 브랜치는 제출 때와 다른 상태입니다.
+
 과제기간(19.07.31 ~ 19.08.07)의 결과물은 [제출용 브랜치](https://github.com/nadarm/image-search/tree/for-submitting-assignments)를 봐주세요.
 
 
