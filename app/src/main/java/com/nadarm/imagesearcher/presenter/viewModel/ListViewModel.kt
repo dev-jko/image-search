@@ -65,6 +65,7 @@ interface ListViewModel {
         init {
 
             this.query
+                .doOnNext { println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ query do on next @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@") }
                 .flatMapSingle { queryAndPage ->
                     this.getQueryResponse.execute(queryAndPage.first, queryAndPage.second)
                         .subscribeOn(schedulers.io())
@@ -72,10 +73,11 @@ interface ListViewModel {
                         .doFinally { this.displayProgress.onNext(View.GONE) }
                         .doOnError { this.queryResponseError.onNext(Unit) }
                         .retryWhen { errors ->
-                            errors.zipWith(this.retry) { o: Throwable, _: Unit -> Flowable.just(o) }
+                            errors.zipWith(this.retry) { throwable: Throwable, _: Unit -> Flowable.just(throwable) }
                         }
                         .map { mapper.mapToSealedViewHolderData(it, this) }
                 }
+                .doOnNext { println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ flatmap single do on next @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@") }
                 .doOnNext { this.savePosition(0) }
                 .subscribe(this.itemList)
 

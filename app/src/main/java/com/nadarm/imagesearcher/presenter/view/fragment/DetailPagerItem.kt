@@ -19,6 +19,7 @@ class DetailPagerItem(
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         this.binding = DataBindingUtil.inflate(inflater, R.layout.item_detail_pager, container, false)
+        this.binding.lifecycleOwner = viewLifecycleOwner
         return this.binding.root
     }
 
