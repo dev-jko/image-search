@@ -90,10 +90,6 @@ class ListFragment : Fragment() {
             .withLatestFrom(this.listVm.outputs.restorePosition()) { documents: List<SealedViewHolderData>, position: Int ->
                 documents to position
             }
-            .doOnNext { println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ itemlist do on next @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@") }
-            .doOnSubscribe { println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ itemlist do on subscribe @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@") }
-            .doOnComplete { println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ itemlist do on complete @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@") }
-            .doFinally { println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ itemlist do finally @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@") }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
             .subscribe(this::refreshDocuments, this::printLog)
@@ -174,11 +170,10 @@ class ListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         this.compositeDisposable.clear()
     }
-
 
     companion object {
         @JvmStatic
