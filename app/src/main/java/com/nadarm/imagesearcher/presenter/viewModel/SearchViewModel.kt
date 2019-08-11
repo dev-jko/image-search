@@ -46,6 +46,7 @@ interface SearchViewModel {
         val outputs: Outputs = this
 
         init {
+
             this.querySubmitted
                 .flatMapCompletable {
                     this.addSearchedQuery.execute(it)

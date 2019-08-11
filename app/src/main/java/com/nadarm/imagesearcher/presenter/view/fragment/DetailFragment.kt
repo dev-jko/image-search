@@ -35,7 +35,7 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         this.binding = DataBindingUtil.inflate(inflater, R.layout.fragment_detail, container, false)
-        this.binding.lifecycleOwner = this
+        this.binding.lifecycleOwner = viewLifecycleOwner
         return this.binding.root
     }
 
@@ -85,8 +85,8 @@ class DetailFragment : Fragment() {
         startActivity(intent)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         this.compositeDisposable.clear()
     }
 

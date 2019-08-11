@@ -24,8 +24,8 @@ import com.nadarm.imagesearcher.presenter.viewModel.DetailViewModel
 import com.nadarm.imagesearcher.presenter.viewModel.ListViewModel
 import com.nadarm.imagesearcher.presenter.viewModel.SearchViewModel
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.withLatestFrom
 import javax.inject.Inject
 
 
@@ -49,7 +49,7 @@ class ListFragment : Fragment() {
     ): View? {
         this.binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
-        this.binding.lifecycleOwner = this
+        this.binding.lifecycleOwner = viewLifecycleOwner
         return this.binding.root
     }
 
@@ -87,12 +87,9 @@ class ListFragment : Fragment() {
             .addTo(compositeDisposable)
 
         this.listVm.outputs.itemList()
-            .withLatestFrom(
-                this.listVm.outputs.restorePosition(),
-                BiFunction<List<SealedViewHolderData>, Int, Pair<List<SealedViewHolderData>, Int>> { documents, position ->
-                    documents to position
-                }
-            )
+            .withLatestFrom(this.listVm.outputs.restorePosition()) { documents: List<SealedViewHolderData>, position: Int ->
+                documents to position
+            }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())
             .subscribe(this::refreshDocuments, this::printLog)
@@ -173,11 +170,10 @@ class ListFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         this.compositeDisposable.clear()
     }
-
 
     companion object {
         @JvmStatic

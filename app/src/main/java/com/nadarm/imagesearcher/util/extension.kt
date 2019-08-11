@@ -1,6 +1,7 @@
 package com.nadarm.imagesearcher.util
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.SearchView
 
@@ -18,8 +19,8 @@ class MySearchView : SearchView {
 fun SearchView.setOnQueryListener(delegate: MySearchView.Delegate) {
     this.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(query: String?): Boolean {
-            if (query != null) {
-                delegate.querySubmitted(query)
+            if (!TextUtils.isEmpty(query)) {
+                delegate.querySubmitted(query!!)
                 setQuery("", false)
                 clearFocus()
             }
@@ -27,7 +28,7 @@ fun SearchView.setOnQueryListener(delegate: MySearchView.Delegate) {
         }
 
         override fun onQueryTextChange(newText: String?): Boolean {
-            val query = this@setOnQueryListener.query
+            val query: CharSequence = this@setOnQueryListener.query
             if (query.length >= 2) {
                 delegate.queryChanged(query.toString())
             }

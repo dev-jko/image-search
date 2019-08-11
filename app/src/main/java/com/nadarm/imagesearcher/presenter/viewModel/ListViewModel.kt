@@ -72,7 +72,7 @@ interface ListViewModel {
                         .doFinally { this.displayProgress.onNext(View.GONE) }
                         .doOnError { this.queryResponseError.onNext(Unit) }
                         .retryWhen { errors ->
-                            errors.zipWith(this.retry) { o: Throwable, _: Unit -> Flowable.just(o) }
+                            errors.zipWith(this.retry) { throwable: Throwable, _: Unit -> Flowable.just(throwable) }
                         }
                         .map { mapper.mapToSealedViewHolderData(it, this) }
                 }
