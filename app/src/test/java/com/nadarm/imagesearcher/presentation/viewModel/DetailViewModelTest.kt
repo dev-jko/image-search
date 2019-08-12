@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.viewModel
+package com.nadarm.imagesearcher.presentation.viewModel
 
 import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument

@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.view.fragment
+package com.nadarm.imagesearcher.presentation.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

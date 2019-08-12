@@ -1,10 +1,10 @@
-package com.nadarm.imagesearcher.presenter.viewModel
+package com.nadarm.imagesearcher.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.domain.useCase.GetQueryResponse
-import com.nadarm.imagesearcher.presenter.view.adapter.DetailPagerAdapter
+import com.nadarm.imagesearcher.presentation.view.adapter.DetailPagerAdapter
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject

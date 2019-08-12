@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <variable name="adapter" type="com.nadarm.imagesearcher.presenter.view.adapter.ImageAdapter"/>
-        <variable name="listVm" type="com.nadarm.imagesearcher.presenter.viewModel.ListViewModel.ViewModelImpl"/>
-        <variable name="searchVm" type="com.nadarm.imagesearcher.presenter.viewModel.SearchViewModel.ViewModelImpl"/>
+        <variable name="adapter" type="com.nadarm.imagesearcher.presentation.view.adapter.ImageAdapter"/>
+        <variable name="listVm" type="com.nadarm.imagesearcher.presentation.viewModel.ListViewModel.ViewModelImpl"/>
+        <variable name="searchVm" type="com.nadarm.imagesearcher.presentation.viewModel.SearchViewModel.ViewModelImpl"/>
     </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"

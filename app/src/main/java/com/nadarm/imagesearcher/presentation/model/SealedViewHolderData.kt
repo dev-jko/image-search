@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.model
+package com.nadarm.imagesearcher.presentation.model
 
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 

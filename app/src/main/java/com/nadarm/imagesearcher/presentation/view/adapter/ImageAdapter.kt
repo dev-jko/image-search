@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.view.adapter
+package com.nadarm.imagesearcher.presentation.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.nadarm.imagesearcher.BR
 import com.nadarm.imagesearcher.R
-import com.nadarm.imagesearcher.presenter.model.SealedViewHolderData
+import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
 
 class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
 

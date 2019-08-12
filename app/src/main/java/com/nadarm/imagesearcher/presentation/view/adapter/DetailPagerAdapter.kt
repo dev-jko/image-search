@@ -1,10 +1,10 @@
-package com.nadarm.imagesearcher.presenter.view.adapter
+package com.nadarm.imagesearcher.presentation.view.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.nadarm.imagesearcher.domain.model.ImageDocument
-import com.nadarm.imagesearcher.presenter.view.fragment.DetailPagerItem
+import com.nadarm.imagesearcher.presentation.view.fragment.DetailPagerItem
 
 class DetailPagerAdapter(
     fm: FragmentManager,

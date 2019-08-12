@@ -6,7 +6,7 @@
 
         <variable
             name="delegate"
-            type="com.nadarm.imagesearcher.presenter.view.fragment.DetailPagerItem.Delegate" />
+            type="com.nadarm.imagesearcher.presentation.view.fragment.DetailPagerItem.Delegate" />
 
         <variable
             name="imageDocument"

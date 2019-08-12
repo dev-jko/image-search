@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.viewModel
+package com.nadarm.imagesearcher.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

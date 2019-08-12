@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.view.adapter
+package com.nadarm.imagesearcher.presentation.view.adapter
 
 import android.content.Context
 import android.database.Cursor

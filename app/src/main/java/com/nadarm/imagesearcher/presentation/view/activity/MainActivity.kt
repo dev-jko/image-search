@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.view.activity
+package com.nadarm.imagesearcher.presentation.view.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

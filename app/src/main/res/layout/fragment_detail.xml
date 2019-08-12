@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="detailVm" type="com.nadarm.imagesearcher.presenter.viewModel.DetailViewModel.ViewModelImpl"/>
+        <variable name="detailVm" type="com.nadarm.imagesearcher.presentation.viewModel.DetailViewModel.ViewModelImpl"/>
     </data>
     <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".presenter.view.fragment.DetailFragment">
+            tools:context=".presentation.view.fragment.DetailFragment">
 
         <androidx.viewpager.widget.ViewPager
                 android:layout_width="match_parent"

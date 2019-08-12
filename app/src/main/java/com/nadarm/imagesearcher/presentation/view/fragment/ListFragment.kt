@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.view.fragment
+package com.nadarm.imagesearcher.presentation.view.fragment
 
 import android.database.Cursor
 import android.os.Bundle
@@ -17,12 +17,12 @@ import com.nadarm.imagesearcher.databinding.FragmentListBinding
 import com.nadarm.imagesearcher.di.AndroidApplication
 import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
-import com.nadarm.imagesearcher.presenter.model.SealedViewHolderData
-import com.nadarm.imagesearcher.presenter.view.adapter.ImageAdapter
-import com.nadarm.imagesearcher.presenter.view.adapter.SuggestionCursorAdapter
-import com.nadarm.imagesearcher.presenter.viewModel.DetailViewModel
-import com.nadarm.imagesearcher.presenter.viewModel.ListViewModel
-import com.nadarm.imagesearcher.presenter.viewModel.SearchViewModel
+import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
+import com.nadarm.imagesearcher.presentation.view.adapter.ImageAdapter
+import com.nadarm.imagesearcher.presentation.view.adapter.SuggestionCursorAdapter
+import com.nadarm.imagesearcher.presentation.viewModel.DetailViewModel
+import com.nadarm.imagesearcher.presentation.viewModel.ListViewModel
+import com.nadarm.imagesearcher.presentation.viewModel.SearchViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.withLatestFrom

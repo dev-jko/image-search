@@ -1,10 +1,10 @@
-package com.nadarm.imagesearcher.presenter.model.mapper
+package com.nadarm.imagesearcher.presentation.model.mapper
 
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.domain.model.QueryResponse
 import com.nadarm.imagesearcher.domain.model.SearchMeta
-import com.nadarm.imagesearcher.presenter.model.SealedViewHolderData
-import com.nadarm.imagesearcher.presenter.view.adapter.ImageAdapter
+import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
+import com.nadarm.imagesearcher.presentation.view.adapter.ImageAdapter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before

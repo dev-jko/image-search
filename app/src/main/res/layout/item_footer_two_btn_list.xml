@@ -5,7 +5,7 @@
 
         <variable
             name="item"
-            type="com.nadarm.imagesearcher.presenter.model.SealedViewHolderData.FooterTwoBtnItem" />
+            type="com.nadarm.imagesearcher.presentation.model.SealedViewHolderData.FooterTwoBtnItem" />
     </data>
 
     <LinearLayout

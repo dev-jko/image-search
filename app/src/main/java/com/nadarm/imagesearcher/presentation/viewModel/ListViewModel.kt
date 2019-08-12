@@ -1,13 +1,13 @@
-package com.nadarm.imagesearcher.presenter.viewModel
+package com.nadarm.imagesearcher.presentation.viewModel
 
 import android.view.View
 import androidx.lifecycle.ViewModel
 import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.domain.useCase.GetQueryResponse
-import com.nadarm.imagesearcher.presenter.model.SealedViewHolderData
-import com.nadarm.imagesearcher.presenter.model.mapper.SealedViewHolderDataMapper
-import com.nadarm.imagesearcher.presenter.view.adapter.ImageAdapter
+import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
+import com.nadarm.imagesearcher.presentation.model.mapper.SealedViewHolderDataMapper
+import com.nadarm.imagesearcher.presentation.view.adapter.ImageAdapter
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable

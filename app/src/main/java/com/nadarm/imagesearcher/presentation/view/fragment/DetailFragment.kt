@@ -1,4 +1,4 @@
-package com.nadarm.imagesearcher.presenter.view.fragment
+package com.nadarm.imagesearcher.presentation.view.fragment
 
 import android.content.Intent
 import android.net.Uri
@@ -14,8 +14,8 @@ import com.nadarm.imagesearcher.databinding.FragmentDetailBinding
 import com.nadarm.imagesearcher.di.AndroidApplication
 import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
-import com.nadarm.imagesearcher.presenter.view.adapter.DetailPagerAdapter
-import com.nadarm.imagesearcher.presenter.viewModel.DetailViewModel
+import com.nadarm.imagesearcher.presentation.view.adapter.DetailPagerAdapter
+import com.nadarm.imagesearcher.presentation.viewModel.DetailViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
