@@ -6,7 +6,7 @@ import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.domain.useCase.GetQueryResponse
 import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
 import com.nadarm.imagesearcher.presentation.model.mapper.SealedViewHolderDataMapper
-import com.nadarm.imagesearcher.presentation.view.adapter.ImageAdapter
+import com.nadarm.imagesearcher.presentation.view.adapter.ImageListAdapter
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -21,7 +21,7 @@ import javax.inject.Singleton
 
 interface ListViewModel {
 
-    interface Inputs : ImageAdapter.Delegate {
+    interface Inputs : ImageListAdapter.Delegate {
         fun query(query: String)
         fun savePosition(position: Int)
         fun retrySearch()

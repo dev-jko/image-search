@@ -17,7 +17,7 @@ import com.nadarm.imagesearcher.databinding.FragmentListBinding
 import com.nadarm.imagesearcher.di.AndroidApplication
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
-import com.nadarm.imagesearcher.presentation.view.adapter.ImageAdapter
+import com.nadarm.imagesearcher.presentation.view.adapter.ImageListAdapter
 import com.nadarm.imagesearcher.presentation.view.adapter.SuggestionCursorAdapter
 import com.nadarm.imagesearcher.presentation.viewModel.DetailViewModel
 import com.nadarm.imagesearcher.presentation.viewModel.ListViewModel
@@ -57,7 +57,7 @@ class ListFragment : Fragment() {
 
         (activity!!.application as AndroidApplication).getAppComponent().inject(this)
 
-        this.binding.adapter = ImageAdapter()
+        this.binding.adapter = ImageListAdapter()
         this.binding.listVm = this.listVm
         this.binding.searchVm = this.searchVm
         this.binding.searchView.suggestionsAdapter =
@@ -154,7 +154,7 @@ class ListFragment : Fragment() {
 
     private fun refreshDocuments(itemListAndPosition: Pair<List<SealedViewHolderData>, Int>) {
         this.selectSpanCount(itemListAndPosition.first.size)
-        this.binding.adapter?.refresh(itemListAndPosition.first)
+        this.binding.adapter?.submitList(itemListAndPosition.first)
         this.binding.imageRecyclerView.scrollToPosition(itemListAndPosition.second)
     }
 

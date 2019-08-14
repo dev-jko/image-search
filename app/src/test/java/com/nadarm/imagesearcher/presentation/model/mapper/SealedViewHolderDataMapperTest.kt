@@ -4,7 +4,7 @@ import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.domain.model.QueryResponse
 import com.nadarm.imagesearcher.domain.model.SearchMeta
 import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
-import com.nadarm.imagesearcher.presentation.view.adapter.ImageAdapter
+import com.nadarm.imagesearcher.presentation.view.adapter.ImageListAdapter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -15,7 +15,7 @@ class SealedViewHolderDataMapperTest {
 
     private lateinit var mapper: SealedViewHolderDataMapper
     private var queryResponse: QueryResponse? = null
-    private val delegate: ImageAdapter.Delegate = mock(ImageAdapter.Delegate::class.java)
+    private val delegate: ImageListAdapter.Delegate = mock(ImageListAdapter.Delegate::class.java)
 
 
     @Before
