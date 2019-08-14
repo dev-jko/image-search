@@ -1,13 +1,14 @@
 package com.nadarm.imagesearcher.presentation.viewModel
 
 import android.database.Cursor
-import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.useCase.AddSearchedQuery
 import com.nadarm.imagesearcher.domain.useCase.GetSuggestions
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.TestObserver
+import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.zipWith
@@ -25,7 +26,6 @@ class SearchViewModelTest {
     private lateinit var testScheduler: TestScheduler
     private val addSearchQuery: AddSearchedQuery = mock(AddSearchedQuery::class.java)
     private val getSuggestions: GetSuggestions = mock(GetSuggestions::class.java)
-    private val schedulers: AppSchedulers = mock(AppSchedulers::class.java)
     private val compositeDisposable = CompositeDisposable()
     private val textList = arrayOf("k", "ka", "kak", "kaka", "kakao")
 
@@ -34,17 +34,20 @@ class SearchViewModelTest {
     @Before
     fun setUp() {
         this.testScheduler = TestScheduler()
-        `when`(this.schedulers.ui()).thenReturn(this.testScheduler)
-        `when`(this.schedulers.io()).thenReturn(this.testScheduler)
-        `when`(this.schedulers.computation()).thenReturn(this.testScheduler)
+        RxJavaPlugins.setComputationSchedulerHandler { this.testScheduler }
+        RxJavaPlugins.setIoSchedulerHandler { this.testScheduler }
+        RxAndroidPlugins.setMainThreadSchedulerHandler { this.testScheduler }
 
-        this.vm = SearchViewModel.ViewModelImpl(this.addSearchQuery, this.getSuggestions, this.schedulers)
+        this.vm = SearchViewModel.ViewModelImpl(this.addSearchQuery, this.getSuggestions)
         test = TestObserver()
         test.addTo(compositeDisposable)
     }
 
     @After
     fun tearDown() {
+        RxJavaPlugins.reset()
+        RxAndroidPlugins.reset()
+
         this.compositeDisposable.clear()
     }
 
@@ -56,7 +59,7 @@ class SearchViewModelTest {
 
 
         this.vm.outputs.querySuggestions()
-            .observeOn(schedulers.ui())
+            .observeOn(this.testScheduler)
             .subscribe(test)
 
         this.vm.inputs.queryChanged(this.textList.first())
@@ -79,7 +82,7 @@ class SearchViewModelTest {
 
 
         this.vm.outputs.querySuggestions()
-            .observeOn(schedulers.ui())
+            .observeOn(this.testScheduler)
             .subscribe(test)
 
         val queryObservable = textList.toObservable()
@@ -130,7 +133,7 @@ class SearchViewModelTest {
 
 
         this.vm.outputs.querySuggestions()
-            .observeOn(schedulers.ui())
+            .observeOn(this.testScheduler)
             .subscribe(test)
 
         test.assertSubscribed()

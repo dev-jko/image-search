@@ -12,12 +12,13 @@ import androidx.fragment.app.Fragment
 import com.nadarm.imagesearcher.R
 import com.nadarm.imagesearcher.databinding.FragmentDetailBinding
 import com.nadarm.imagesearcher.di.AndroidApplication
-import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.presentation.view.adapter.DetailPagerAdapter
 import com.nadarm.imagesearcher.presentation.viewModel.DetailViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -27,8 +28,6 @@ class DetailFragment : Fragment() {
     private lateinit var binding: FragmentDetailBinding
     @Inject
     lateinit var detailVm: DetailViewModel.ViewModelImpl
-    @Inject
-    lateinit var schedulers: AppSchedulers
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,19 +48,19 @@ class DetailFragment : Fragment() {
         this.binding.detailVm = this.detailVm
 
         this.detailVm.outputs.imageDocuments()
-            .subscribeOn(schedulers.io())
-            .observeOn(schedulers.ui())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::refreshPagerItem, this::printLog)
             .addTo(compositeDisposable)
 
         this.detailVm.outputs.currentPageAndIndex()
-            .subscribeOn(schedulers.computation())
-            .observeOn(schedulers.ui())
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::setDetailViewPagerCurrentIndex, this::printLog)
             .addTo(compositeDisposable)
 
         this.detailVm.outputs.openUrlLink()
-            .observeOn(schedulers.ui())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::openUrlLink, this::printLog)
             .addTo(compositeDisposable)
     }

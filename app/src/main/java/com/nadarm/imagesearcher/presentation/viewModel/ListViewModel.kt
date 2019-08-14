@@ -2,7 +2,6 @@ package com.nadarm.imagesearcher.presentation.viewModel
 
 import android.view.View
 import androidx.lifecycle.ViewModel
-import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.domain.useCase.GetQueryResponse
 import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
@@ -13,6 +12,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.rxkotlin.zipWith
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
@@ -38,8 +38,7 @@ interface ListViewModel {
     @Singleton
     class ViewModelImpl @Inject constructor(
         private val getQueryResponse: GetQueryResponse,
-        private val mapper: SealedViewHolderDataMapper,
-        private val schedulers: AppSchedulers
+        private val mapper: SealedViewHolderDataMapper
     ) : ViewModel(), Inputs, Outputs {
 
         private val compositeDisposable = CompositeDisposable()
@@ -54,7 +53,7 @@ interface ListViewModel {
         private val itemList: BehaviorSubject<List<SealedViewHolderData>> = BehaviorSubject.create()
         private val displayProgress: BehaviorSubject<Int> = BehaviorSubject.create()
         private val startDetailFragment: Observable<ImageDocument> =
-            this.imageClicked.throttleFirst(600, TimeUnit.MILLISECONDS, schedulers.computation())
+            this.imageClicked.throttleFirst(600, TimeUnit.MILLISECONDS)
         private val restorePosition: BehaviorSubject<Int> = BehaviorSubject.createDefault(0)
         private val showSnackBar: Observable<Unit> = this.queryResponseError
         private val retry: Flowable<Unit> = this.retrySearch
@@ -67,7 +66,7 @@ interface ListViewModel {
             this.query
                 .flatMapSingle { queryAndPage ->
                     this.getQueryResponse.execute(queryAndPage.first, queryAndPage.second)
-                        .subscribeOn(schedulers.io())
+                        .subscribeOn(Schedulers.io())
                         .doOnSubscribe { this.displayProgress.onNext(View.VISIBLE) }
                         .doFinally { this.displayProgress.onNext(View.GONE) }
                         .doOnError { this.queryResponseError.onNext(Unit) }
@@ -80,7 +79,7 @@ interface ListViewModel {
                 .subscribe(this.itemList)
 
             this.pageChangeButtonClicked
-                .throttleFirst(600, TimeUnit.MILLISECONDS, schedulers.computation())
+                .throttleFirst(600, TimeUnit.MILLISECONDS, Schedulers.computation())
                 .subscribe(this.query)
 
             this.savePosition.subscribe(this.restorePosition)

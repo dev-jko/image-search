@@ -1,13 +1,14 @@
 package com.nadarm.imagesearcher.presentation.viewModel
 
-import com.nadarm.imagesearcher.di.AppSchedulers
 import com.nadarm.imagesearcher.domain.model.ImageDocument
 import com.nadarm.imagesearcher.domain.model.QueryResponse
 import com.nadarm.imagesearcher.domain.useCase.GetQueryResponse
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.TestObserver
+import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.rxkotlin.zipWith
@@ -16,7 +17,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import java.util.concurrent.TimeUnit
 
@@ -25,7 +25,6 @@ class DetailViewModelTest {
     private lateinit var vm: DetailViewModel.ViewModelImpl
     private lateinit var testScheduler: TestScheduler
     private val getQueryResponse: GetQueryResponse = mock(GetQueryResponse::class.java)
-    private val schedulers: AppSchedulers = mock(AppSchedulers::class.java)
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -33,15 +32,18 @@ class DetailViewModelTest {
     @Before
     fun setUp() {
         this.testScheduler = TestScheduler()
-        Mockito.`when`(this.schedulers.ui()).thenReturn(this.testScheduler)
-        Mockito.`when`(this.schedulers.io()).thenReturn(this.testScheduler)
-        Mockito.`when`(this.schedulers.computation()).thenReturn(this.testScheduler)
+        RxJavaPlugins.setIoSchedulerHandler { this.testScheduler }
+        RxJavaPlugins.setComputationSchedulerHandler { this.testScheduler }
+        RxAndroidPlugins.setMainThreadSchedulerHandler { this.testScheduler }
 
-        this.vm = DetailViewModel.ViewModelImpl(this.getQueryResponse, this.schedulers)
+        this.vm = DetailViewModel.ViewModelImpl(this.getQueryResponse)
     }
 
     @After
     fun tearDown() {
+        RxJavaPlugins.reset()
+        RxAndroidPlugins.reset()
+
         this.compositeDisposable.clear()
     }
 
@@ -90,7 +92,7 @@ class DetailViewModelTest {
         test.addTo(compositeDisposable)
 
         this.vm.outputs.imageDocuments()
-            .subscribeOn(schedulers.io())
+            .subscribeOn(this.testScheduler)
             .subscribe(test)
 
 
@@ -119,7 +121,7 @@ class DetailViewModelTest {
         test.addTo(compositeDisposable)
 
         this.vm.outputs.openUrlLink()
-            .observeOn(schedulers.ui())
+            .observeOn(this.testScheduler)
             .subscribe(test)
 
 
