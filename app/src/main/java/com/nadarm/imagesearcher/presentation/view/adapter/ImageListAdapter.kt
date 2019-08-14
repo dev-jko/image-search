@@ -4,25 +4,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nadarm.imagesearcher.BR
 import com.nadarm.imagesearcher.R
 import com.nadarm.imagesearcher.presentation.model.SealedViewHolderData
 
-class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
+class ImageListAdapter : ListAdapter<SealedViewHolderData, ImageListAdapter.ViewHolder>(ItemCallback()) {
 
     interface Delegate : SealedViewHolderData.ImageItem.Delegate, SealedViewHolderData.FooterOneBtnItem.Delegate
 
-    private var itemList: List<SealedViewHolderData> = emptyList()
-
-
-    fun refresh(newDocuments: List<SealedViewHolderData>) {
-        this.itemList = newDocuments
-        notifyDataSetChanged()
-    }
-
     override fun getItemViewType(position: Int): Int {
-        return when (itemList[position]) {
+        return when (this.getItem(position)) {
             is SealedViewHolderData.ImageItem -> R.layout.item_image_list
             is SealedViewHolderData.HeaderItem -> R.layout.item_header_list
             is SealedViewHolderData.FooterOneBtnItem -> R.layout.item_footer_one_btn_list
@@ -31,7 +25,7 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
     }
 
     fun getItemViewClass(position: Int): SealedViewHolderData {
-        return this.itemList[position]
+        return this.getItem(position)
     }
 
 
@@ -43,11 +37,8 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(this.itemList[position])
+        holder.bind(this.getItem(position))
     }
-
-    override fun getItemCount(): Int = this.itemList.size
-
 
     class ViewHolder(
         private val binding: ViewDataBinding
@@ -59,5 +50,21 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
         }
     }
 
+    class ItemCallback : DiffUtil.ItemCallback<SealedViewHolderData>() {
+        override fun areItemsTheSame(oldItem: SealedViewHolderData, newItem: SealedViewHolderData): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: SealedViewHolderData, newItem: SealedViewHolderData): Boolean {
+            return when {
+                oldItem is SealedViewHolderData.HeaderItem
+                        && newItem is SealedViewHolderData.HeaderItem -> oldItem.text == newItem.text
+                oldItem is SealedViewHolderData.ImageItem
+                        && newItem is SealedViewHolderData.ImageItem -> oldItem.imageDocument.imageUrl == newItem.imageDocument.imageUrl
+                else -> false
+            }
+        }
+    }
 }
+
 
